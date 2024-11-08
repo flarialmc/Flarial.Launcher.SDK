@@ -6,7 +6,7 @@ static class Program
 {
     static void Main()
     {
-        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Flarial.Launcher");
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Flarial.Launcher");
         Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
 
         AppDomain.CurrentDomain.UnhandledException += (_, e) => Logger.Log(e.ExceptionObject.ToString());
