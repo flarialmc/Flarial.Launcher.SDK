@@ -52,7 +52,7 @@ sealed partial class PlayPage : TabPage
 
         button.Click += async (_, _) =>
         {
-            checkBox.Enabled = button.Enabled = false;
+            button.Enabled = false;
             progressBar.Visible = true;
 
             button.Text = "Downloading...";
@@ -71,7 +71,7 @@ sealed partial class PlayPage : TabPage
             await Client.LaunchAsync(checkBox.Checked);
 
             button.Text = "Launch";
-            checkBox.Enabled = button.Enabled = true;
+            button.Enabled = true;
             progressBar.Visible = false;
         };
     }
