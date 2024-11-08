@@ -1,9 +1,11 @@
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Launcher;
 
-sealed class Play : TabPage
+sealed partial class Play : TabPage
 {
     internal Play()
     {
@@ -28,11 +30,16 @@ sealed class Play : TabPage
         tableLayoutPanel.RowStyles.Add(new() { SizeType = SizeType.Percent, Height = 100 });
         tableLayoutPanel.Controls.Add(button);
 
+        CheckBox checkBox = new() { Text = "Beta", AutoSize = true, Margin = default, Anchor = AnchorStyles.None };
+        tableLayoutPanel.Controls.Add(checkBox);
+
         ProgressBar progressBar = new()
         {
             Dock = DockStyle.Bottom,
             Height = 23,
-            Visible = false
+            Visible = false,
+            Style = ProgressBarStyle.Marquee,
+            MarqueeAnimationSpeed = 1
         };
         progressBar.VisibleChanged += (sender, _) =>
         {
@@ -43,18 +50,28 @@ sealed class Play : TabPage
         tableLayoutPanel.Controls.Add(progressBar);
 
 
-        button.Click += (_, _) =>
+        button.Click += async (_, _) =>
         {
-            button.Enabled = false;
+            checkBox.Enabled = button.Enabled = false;
             progressBar.Visible = true;
 
             button.Text = "Downloading...";
-            progressBar.Style = ProgressBarStyle.Blocks;
+            await Client.DownloadAsync((_) =>
+            {
+                if (progressBar.Value != _)
+                {
+                    if (progressBar.Style is ProgressBarStyle.Marquee)
+                        progressBar.Style = ProgressBarStyle.Blocks;
+                    progressBar.Value = _;
+                }
+            }, checkBox.Checked);
 
             button.Text = "Waiting...";
             progressBar.Style = ProgressBarStyle.Marquee;
+            await Client.LaunchAsync(checkBox.Checked);
 
-            button.Enabled = true;
+            button.Text = "Launch";
+            checkBox.Enabled = button.Enabled = true;
             progressBar.Visible = false;
         };
     }
