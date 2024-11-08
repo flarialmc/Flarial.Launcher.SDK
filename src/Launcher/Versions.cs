@@ -16,8 +16,6 @@ static class Versions
 
     const string Url = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/versions.json";
 
-    static Versions() => Directory.CreateDirectory("Versions");
-
     internal static async Task<List<(string Name, string Url)>> GetAsync()
     {
         Logger.Log("Attempting to fetch compatible versions.");

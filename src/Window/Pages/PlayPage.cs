@@ -30,7 +30,7 @@ sealed partial class PlayPage : TabPage
         tableLayoutPanel.RowStyles.Add(new() { SizeType = SizeType.Percent, Height = 100 });
         tableLayoutPanel.Controls.Add(button);
 
-        CheckBox checkBox = new() { Text = "Beta", AutoSize = true, Margin = default, Anchor = AnchorStyles.None };
+        CheckBox checkBox = new() { Text = "Beta", AutoSize = true, Margin = default, Anchor = AnchorStyles.None, Enabled = false };
         tableLayoutPanel.Controls.Add(checkBox);
 
         ProgressBar progressBar = new()
