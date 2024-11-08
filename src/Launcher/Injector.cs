@@ -21,6 +21,8 @@ static class Injector
 
     internal static void Inject(int processId, string path)
     {
+        Logger.Log("Attempting to inject specified dynamic link library.");
+
         FileInfo info = new(path = Path.GetFullPath(path)); var security = info.GetAccessControl();
         security.AddAccessRule(new(Identifier, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
         info.SetAccessControl(security);
@@ -48,5 +50,7 @@ static class Injector
             CloseHandle(hThread);
             CloseHandle(hProcess);
         }
+
+        Logger.Log("The specified dynamic link library has been injected successfully.");
     }
 }

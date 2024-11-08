@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Launcher;
 
-sealed partial class Play : TabPage
+sealed partial class PlayPage : TabPage
 {
-    internal Play()
+    internal PlayPage()
     {
         Text = "Play";
         TableLayoutPanel tableLayoutPanel = new()

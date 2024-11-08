@@ -5,7 +5,8 @@
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
-    <NoWarn>SYSLIB1054,SYSLIB1096,IDE0130</NoWarn>
+    <NoWarn>SYSLIB1054,SYSLIB1096,IDE0130,CA1835</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
 </Project>

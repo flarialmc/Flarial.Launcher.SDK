@@ -42,6 +42,8 @@ static class Game
     {
         var package = Get();
 
+        Logger.Log("Attempting to launch Minecraft: Bedrock Edition.");
+
         Marshal.ThrowExceptionForHR(PackageDebugSettings.EnableDebugging(package.Id.FullName, default, default));
         using ManualResetEventSlim @event = new();
         using FileSystemWatcher watcher = new(ApplicationDataManager.CreateForPackageFamily(package.Id.FamilyName).LocalFolder.Path)
@@ -50,11 +52,23 @@ static class Game
             IncludeSubdirectories = true,
             EnableRaisingEvents = true
         };
-        watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
+        watcher.Deleted += (_, e) =>
+        {
+            if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.Log("Minecraft: Bedrock Edition is fully initialized.");
+                @event.Set();
+            }
+        };
 
         Marshal.ThrowExceptionForHR(ApplicationActivationManager.ActivateApplication(package.GetAppListEntries()[0].AppUserModelId, null, AO_NOERRORUI, out var processId));
+        Logger.Log($"Minecraft: Bedrock Edition has been launched.");
         @event.Wait(); return processId;
     }
 
-    internal static void Terminate() => PackageDebugSettings.TerminateAllProcesses(Get().Id.FullName);
+    internal static void Terminate()
+    {
+        Logger.Log("Attempting to terminate Minecraft: Bedrock Edition.");
+        PackageDebugSettings.TerminateAllProcesses(Get().Id.FullName);
+    }
 }

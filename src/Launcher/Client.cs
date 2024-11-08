@@ -23,9 +23,14 @@ static class Client
 
     internal static async Task DownloadAsync(Action<int> action, bool _ = false)
     {
+        Logger.Log($"Attempting to download: {(_ ? Beta : Release)}");
         await Task.Run(Game.Terminate);
         await Internet.DownloadAsync((_ ? Beta : Release).Url, (_ ? Beta : Release).Path, action);
     }
 
-    internal static async Task LaunchAsync(bool _ = false) => await Task.Run(() => Injector.Inject(Game.Launch(), (_ ? Beta : Release).Path));
+    internal static async Task LaunchAsync(bool _ = false)
+    {
+        Logger.Log($"Attempting to launch: {(_ ? Beta : Release)}");
+        await Task.Run(() => Injector.Inject(Game.Launch(), (_ ? Beta : Release).Path));
+    }
 }
