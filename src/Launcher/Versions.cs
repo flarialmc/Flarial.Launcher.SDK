@@ -1,3 +1,5 @@
+namespace Launcher;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +9,6 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Windows.Management.Deployment;
 using WinRT;
-
-namespace Launcher;
 
 static class Versions
 {
