@@ -3,15 +3,6 @@ namespace Minecraft;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-enum PackageExecutionState
-{
-    PES_UNKNOWN = 0,
-    PES_RUNNING = 1,
-    PES_SUSPENDING = 2,
-    PES_SUSPENDED = 3,
-    PES_TERMINATED = 4
-}
-
 [ComImport, Guid("F27C3930-8029-4AD1-94E3-3DBA417810C1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 interface IPackageDebugSettings
 {
@@ -39,7 +30,7 @@ interface IPackageDebugSettings
 
     int StopSessionRedirection(string packageFullName);
 
-    int GetPackageExecutionState(string packageFullName, out PackageExecutionState packageExecutionState);
+    int GetPackageExecutionState(string packageFullName, out int packageExecutionState);
 
     int RegisterForPackageStateChanges(string packageFullName, nint pPackageExecutionStateChangeNotification, nint pdwCookie);
 
@@ -86,7 +77,7 @@ sealed class PackageDebugSettings : IPackageDebugSettings
     public extern int StopSessionRedirection(string packageFullName);
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    public extern int GetPackageExecutionState(string packageFullName, out PackageExecutionState packageExecutionState);
+    public extern int GetPackageExecutionState(string packageFullName, out int packageExecutionState);
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
     public extern int RegisterForPackageStateChanges(string packageFullName, nint pPackageExecutionStateChangeNotification, nint pdwCookie);

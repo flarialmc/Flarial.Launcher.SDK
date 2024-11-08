@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using Windows.System;
 using System.Threading;
-using System.ComponentModel;
 using Windows.Management.Core;
 using Windows.ApplicationModel;
 using Windows.Management.Deployment;

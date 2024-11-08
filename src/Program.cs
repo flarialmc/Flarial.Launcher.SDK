@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Accessibility;
-using Microsoft.VisualBasic.Logging;
 
 static class Program
 {
