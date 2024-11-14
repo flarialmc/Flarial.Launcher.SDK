@@ -10,6 +10,7 @@ static class Extensions
     internal static async Task GetAsync(this HttpClient source, string requestUri, string path, Action<int> action = default)
     {
         using var message = await source.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead);
+        message.EnsureSuccessStatusCode();
 
         using var stream = await message.Content.ReadAsStreamAsync();
         using var destination = File.OpenWrite(path);

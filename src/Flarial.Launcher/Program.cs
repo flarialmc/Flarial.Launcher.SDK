@@ -12,13 +12,9 @@ static class Program
         Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
 
         Console.WriteLine("Injecting Flarial Client: Release...");
-        await Game.TerminateAsync();
-        await Client.DownloadAsync(false);
-        await Client.ActivateAsync(false);
+        await Game.TerminateAsync(); await Client.DownloadAsync(); await Client.ActivateAsync();
 
         Console.WriteLine("Injecting Flarial Client: Beta...");
-        await Game.TerminateAsync();
-        await Client.DownloadAsync(true);
-        await Client.ActivateAsync(true);
+        await Game.TerminateAsync(); await Client.DownloadAsync(true); await Client.ActivateAsync(true);
     }
 }
