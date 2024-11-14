@@ -11,6 +11,9 @@ using Windows.ApplicationModel;
 using Windows.Management.Deployment;
 using System.Runtime.InteropServices;
 
+/// <summary>
+/// Provides method to interact with Minecraft.
+/// </summary>
 public static class Game
 {
     static readonly PackageManager PackageManager = new();
@@ -35,6 +38,10 @@ public static class Game
         return package;
     }
 
+    /// <summary>
+    /// Launches Minecraft &#38; waits for it to fully initialize.
+    /// </summary>
+    /// <returns>The PID of the game.</returns>
     public static int Activate()
     {
         var package = Package();
@@ -55,9 +62,19 @@ public static class Game
         @event.Wait(); return processId;
     }
 
+    /// <summary>
+    /// Terminates Minecraft.
+    /// </summary>
     public static void Terminate() => PackageDebugSettings.TerminateAllProcesses(Package().Id.FullName);
 
+    /// <summary>
+    /// Asynchronously launches Minecraft &#38; waits for it to fully initialize.
+    /// </summary>
+    /// <returns>The PID of the game.</returns>
     public static async Task<int> ActivateAsync() => await Task.Run(Activate).ConfigureAwait(false);
 
+    /// <summary>
+    ///  Asynchronously terminates Minecraft.
+    /// </summary>
     public static async Task TerminateAsync() => await Task.Run(Terminate).ConfigureAwait(false);
 }

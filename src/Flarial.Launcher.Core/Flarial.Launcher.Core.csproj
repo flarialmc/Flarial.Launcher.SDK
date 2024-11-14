@@ -6,6 +6,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>IDE0130</NoWarn>
     <Optimize>true</Optimize>
+    <PublishRelease>true</PublishRelease>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher Core</AssemblyTitle>

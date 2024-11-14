@@ -9,6 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Unmanaged;
 
+/// <summary>
+/// Provides methods for injecting dynamic link libraries.
+/// </summary>
 public static class Injector
 {
     static readonly nint lpStartAddress;
@@ -26,6 +29,12 @@ public static class Injector
         finally { FreeLibrary(hModule); }
     }
 
+    /// <summary>
+    /// Inject a dynamic link library into a process via its PID.
+    /// </summary>
+    /// <param name="processId">PID for the target process.</param>
+    /// <param name="path">Path to the target dynamic link library.</param>
+    /// <exception cref="Win32Exception"></exception>
     public static void Inject(int processId, string path)
     {
         FileInfo info = new(path = Path.GetFullPath(path));
@@ -60,5 +69,11 @@ public static class Injector
         }
     }
 
+    /// <summary>
+    /// Asynchronously inject a dynamic link library into a process via its PID.
+    /// </summary>
+    /// <param name="processId">PID for the target process.</param>
+    /// <param name="path">Path to the target dynamic link library.</param>
+    /// <returns></returns>
     public static async Task InjectAsync(int processId, string path) { using (new _()) await Task.Run(() => Inject(processId, path)); }
 }
