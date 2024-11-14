@@ -7,10 +7,11 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>IDE0130</NoWarn>
     <Optimize>true</Optimize>
+    <UseWindowsForms>true</UseWindowsForms>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <AssemblyTitle>Flarial Launcher</AssemblyTitle>
-    <Product>Flarial Launcher</Product>
+    <AssemblyTitle>Flarial Launcher Core Tests</AssemblyTitle>
+    <Product>Flarial Launcher Core Tests</Product>
     <Copyright>Copyright (C) 2024</Copyright>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>

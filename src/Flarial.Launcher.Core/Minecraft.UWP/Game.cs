@@ -8,16 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Management.Core;
 using Windows.ApplicationModel;
-using Windows.Management.Deployment;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 /// <summary>
 /// Provides method to interact with Minecraft.
 /// </summary>
 public static class Game
 {
-    static readonly PackageManager PackageManager = new();
-
     static readonly ApplicationActivationManager ApplicationActivationManager = new();
 
     static readonly PackageDebugSettings PackageDebugSettings = new();
@@ -30,7 +28,7 @@ public static class Game
 
     static Package Package()
     {
-        var package = PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault();
+        var package = Global.PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault();
 
         if (package is null) Marshal.ThrowExceptionForHR(ERROR_INSTALL_PACKAGE_NOT_FOUND);
         else if (package.Id.Architecture is not ProcessorArchitecture.X64) Marshal.ThrowExceptionForHR(ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE);
@@ -59,6 +57,11 @@ public static class Game
         watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
 
         Marshal.ThrowExceptionForHR(ApplicationActivationManager.ActivateApplication("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App", null, AO_NOERRORUI, out var processId));
+
+        using var process = Process.GetProcessById(processId);
+        process.EnableRaisingEvents = true;
+        process.Exited += (_, _) => @event.Set();
+
         @event.Wait(); return processId;
     }
 

@@ -1,5 +1,3 @@
-namespace Flarial.Launcher.Client;
-
 using System.Runtime.InteropServices;
 
 static class Unmanaged

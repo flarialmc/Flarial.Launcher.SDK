@@ -1,4 +1,4 @@
-namespace Flarial.Launcher.Client;
+namespace Flarial.Launcher;
 
 using System;
 using System.IO;
@@ -24,11 +24,8 @@ public static class Client
     /// <returns></returns>
     public static async Task DownloadAsync(bool _ = false, Action<int> action = default)
     {
-        using (new _())
-        {
-            var (requestUri, path) = _ ? Beta : Release;
-            await Global.HttpClient.GetAsync(requestUri, path, action);
-        }
+        var (requestUri, path) = _ ? Beta : Release;
+        await Global.HttpClient.GetAsync(requestUri, path, action);
     }
 
     /// <summary>
@@ -36,5 +33,5 @@ public static class Client
     /// </summary>
     /// <param name="_">Specify <c>true</c> to use Flarial Client's Beta.</param>
     /// <returns></returns>
-    public static async Task ActivateAsync(bool _ = false) { using (new _()) await Task.Run(() => Injector.Inject(Game.Activate(), (_ ? Beta : Release).Item2)); }
+    public static async Task ActivateAsync(bool _ = false) => await Task.Run(() => Injector.Inject(Game.Activate(), (_ ? Beta : Release).Item2));
 }

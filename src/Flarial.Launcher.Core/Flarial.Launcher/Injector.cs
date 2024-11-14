@@ -1,4 +1,4 @@
-namespace Flarial.Launcher.Client;
+namespace Flarial.Launcher;
 
 using System.ComponentModel;
 using System.IO;
@@ -75,5 +75,5 @@ public static class Injector
     /// <param name="processId">PID for the target process.</param>
     /// <param name="path">Path to the target dynamic link library.</param>
     /// <returns></returns>
-    public static async Task InjectAsync(int processId, string path) { using (new _()) await Task.Run(() => Inject(processId, path)); }
+    public static async Task InjectAsync(int processId, string path) =>await Task.Run(() => Inject(processId, path)); 
 }
