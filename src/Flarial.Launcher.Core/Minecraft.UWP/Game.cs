@@ -69,7 +69,7 @@ public static class Game
         using FileSystemWatcher watcher = new(path) { NotifyFilter = NotifyFilters.FileName, IncludeSubdirectories = true, EnableRaisingEvents = true };
         watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
 
-        Marshal.ThrowExceptionForHR(ApplicationActivationManager.ActivateApplication("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App", null, AO_NOERRORUI, out var processId));
+        Marshal.ThrowExceptionForHR(ApplicationActivationManager.ActivateApplication("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App", default, AO_NOERRORUI, out var processId));
 
         using var process = Process.GetProcessById(processId);
         process.EnableRaisingEvents = true; process.Exited += (_, _) => throw new Win32Exception(ERROR_PROCESS_ABORTED);
