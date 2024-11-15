@@ -53,10 +53,7 @@ sealed class Versions : TabPage
 
         CancellationTokenSource source = default;
 
-        _.FormClosed += (_, _) =>
-        {
-            try { source.Cancel(); } catch (ObjectDisposedException) { }
-        };
+        _.FormClosed += (_, _) => { try { source.Cancel(); } catch (Exception _) when (_ is ObjectDisposedException or NullReferenceException) { } };
 
         _.Shown += async (_, _) =>
         {

@@ -54,7 +54,7 @@ sealed class Play : TabPage
             progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
             button.Text = "Downloading...";
 
-            await Game.TerminateAsync();
+          //  await Game.TerminateAsync();
             await Client.DownloadAsync(checkBox.Checked, (_) =>
             {
                 if (progressBar.Value != _)

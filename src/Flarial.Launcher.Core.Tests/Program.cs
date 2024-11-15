@@ -10,7 +10,7 @@ static class Program
         Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
       
         Application.EnableVisualStyles();
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new Form());
     }
