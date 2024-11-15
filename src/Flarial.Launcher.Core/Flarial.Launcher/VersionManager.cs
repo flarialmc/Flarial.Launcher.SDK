@@ -15,6 +15,9 @@ using System.Xml;
 using System.Xml.Linq;
 using Windows.Management.Deployment;
 
+/// <summary>
+/// Represents a collection of Minecraft versions.
+/// </summary>
 public sealed class VersionEntries : IEnumerable<string>
 {
     readonly Dictionary<string, string> _;
@@ -28,6 +31,9 @@ public sealed class VersionEntries : IEnumerable<string>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
 
+/// <summary>
+/// Represents a version of Minecraft.
+/// </summary>
 public sealed class VersionEntry
 {
     internal string Version, UpdateId;
@@ -50,6 +56,12 @@ public sealed class VersionEntry
 
     public static implicit operator string(VersionEntry _) => _.Version;
 
+    /// <summary>
+    /// Asynchronously install a version of Minecraft.
+    /// </summary>
+    /// <param name="action">Callback for installation progress.</param>
+    /// <param name="token">Token for cancelling the installation.</param>
+    /// <returns></returns>
     public async Task InstallAsync(Action<int> action = default, CancellationToken token = default)
     {
         using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), UpdateId, '1'), Encoding.UTF8, "application/soap+xml");
@@ -92,6 +104,10 @@ public static class VersionManager
         return $"{major}.{minor}.{build}";
     }
 
+    /// <summary>
+    /// Asynchronously gets a list of Minecraft versions supported by Flarial Client.
+    /// </summary>
+    /// <returns></returns>
     public static async Task<VersionEntries> GetAsync()
     {
         Dictionary<string, string> dictionary = [];
