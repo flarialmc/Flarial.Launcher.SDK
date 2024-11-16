@@ -24,8 +24,18 @@ public sealed class VersionEntries : IEnumerable<string>
 
     internal VersionEntries(Dictionary<string, string> _) => this._ = _;
 
+    /// <summary>
+    /// Obtain a version entry.
+    /// </summary>
+    /// <param name="_">The version string to look for.</param>
+    /// <returns></returns>
     public VersionEntry this[string _] => new() { Version = _, UpdateId = this._[_] };
 
+    /// <summary>
+    /// Check if a version exists.
+    /// </summary>
+    /// <param name="_">The version string to look for.</param>
+    /// <returns></returns>
     public bool Contains(string _) => this._.ContainsKey(_);
 
     public IEnumerator<string> GetEnumerator() => _.Keys.GetEnumerator();
