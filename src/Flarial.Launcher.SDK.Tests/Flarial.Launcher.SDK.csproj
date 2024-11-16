@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Flarial.Launcher.Core/Flarial.Launcher.Core.csproj"/>
+    <ProjectReference Include="../Flarial.Launcher.SDK/Flarial.Launcher.SDK.csproj"/>
   </ItemGroup>
 
 </Project>
