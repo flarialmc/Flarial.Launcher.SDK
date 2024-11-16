@@ -14,7 +14,7 @@ using System.ComponentModel;
 using System.Xml.Linq;
 
 /// <summary>
-/// Provides method to interact with Minecraft.
+/// Provides methods to interact with Minecraft.
 /// </summary>
 public static class Game
 {
@@ -46,6 +46,10 @@ public static class Game
         }
     }
 
+    /// <summary>
+    /// Asynchronously obtain Minecraft's installed version.
+    /// </summary>
+    /// <returns></returns>
     public static async Task<string> VersionAsync()
     {
         var package = Package; using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
@@ -55,16 +59,6 @@ public static class Game
 
         return version.Substring(0, version.LastIndexOf('.'));
     }
-
-    //  public static string Version
-    //  {
-    //  get
-    //   {
-    //  var _=     XElement.Parse(File.ReadAllText(Path.Combine(Package.InstalledPath, "AppxManifest.xml")));
-    //Console.WriteLine(_);
-    //     return string.Empty;
-    //  }
-    //  }
 
     /// <summary>
     /// Launches Minecraft &#38; waits for it to fully initialize.
