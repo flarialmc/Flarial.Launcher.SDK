@@ -49,7 +49,7 @@ public static class Game
     /// <summary>
     /// Asynchronously obtain Minecraft's installed version.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The version of Minecraft installed.</returns>
     public static async Task<string> VersionAsync()
     {
         var package = Package; using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
