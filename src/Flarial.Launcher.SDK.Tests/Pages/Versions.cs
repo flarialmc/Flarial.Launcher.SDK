@@ -59,9 +59,9 @@ sealed class Versions : TabPage
             catch (Exception _) when (_ is ObjectDisposedException or NullReferenceException) { }
         };
 
-        listBox.VisibleChanged += (_, _) =>
+        listBox.VisibleChanged += async (_, _) =>
         {
-            foreach (var item in _.Entries.Reverse()) listBox.Items.Add(item);
+            await Task.Run(() => { foreach (var item in _.Entries.Reverse()) listBox.Items.Add(item); });
             listBox.SelectedIndex = 0;
             panel.Enabled = true;
         };

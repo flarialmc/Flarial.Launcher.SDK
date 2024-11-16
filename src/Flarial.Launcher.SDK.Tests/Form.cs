@@ -37,8 +37,8 @@ sealed class Form : System.Windows.Forms.Form
         Load += async (_, _) =>
        {
            Entries = await VersionManager.GetAsync();
-           tabControl.TabPages.AddRange([new Play(this), new Versions(this)]);
            progressBar.Visible = !(tabControl.Visible = true);
+           tabControl.TabPages.AddRange([new Play(this), new Versions(this)]);
        };
     }
 }
