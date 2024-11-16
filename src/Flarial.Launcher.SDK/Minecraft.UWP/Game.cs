@@ -11,7 +11,6 @@ using Windows.ApplicationModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
-using Windows.Management.Deployment;
 
 /// <summary>
 /// Provides method to interact with Minecraft.

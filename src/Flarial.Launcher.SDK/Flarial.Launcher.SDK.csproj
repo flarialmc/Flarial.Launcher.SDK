@@ -9,8 +9,8 @@
     <PublishRelease>true</PublishRelease>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <AssemblyTitle>Flarial Launcher Core</AssemblyTitle>
-    <Product>Flarial Launcher Core</Product>
+    <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
+    <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024</Copyright>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
