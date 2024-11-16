@@ -35,10 +35,10 @@ sealed class Form : System.Windows.Forms.Form
         Controls.Add(progressBar);
 
         Load += async (_, _) =>
-       {
-           Entries = await VersionManager.GetAsync();
-           progressBar.Visible = !(tabControl.Visible = true);
-           tabControl.TabPages.AddRange([new Play(this), new Versions(this)]);
-       };
+        {
+            Entries = await VersionManager.GetAsync();
+            progressBar.Visible = !(tabControl.Visible = true);
+            tabControl.TabPages.AddRange([new Play(this), new Versions(this)]);
+        };
     }
 }

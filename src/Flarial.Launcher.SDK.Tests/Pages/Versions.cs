@@ -49,8 +49,6 @@ sealed class Versions : TabPage
             MarqueeAnimationSpeed = 1
         };
 
-        VersionEntries entries = default;
-
         CancellationTokenSource source = default;
 
         Application.ThreadExit += (_, _) =>
@@ -61,7 +59,7 @@ sealed class Versions : TabPage
 
         listBox.VisibleChanged += async (_, _) =>
         {
-            await Task.Run(() => { foreach (var item in _.Entries.Reverse()) listBox.Items.Add(item); });
+            await Task.Run(() => {foreach (var item in _.Entries.Reverse()) listBox.Items.Add(item);});
             listBox.SelectedIndex = 0;
             panel.Enabled = true;
         };
@@ -71,7 +69,7 @@ sealed class Versions : TabPage
             using (source = new())
             {
                 button2.Visible = progressBar.Visible = !(button1.Visible = listBox.Enabled = false);
-                await entries[(string)listBox.SelectedItem].InstallAsync((_) =>
+                await _.Entries[(string)listBox.SelectedItem].InstallAsync((_) =>
                 {
                     if (progressBar.Value != _)
                     {
