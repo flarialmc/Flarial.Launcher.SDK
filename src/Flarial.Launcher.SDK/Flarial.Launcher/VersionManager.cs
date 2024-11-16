@@ -26,6 +26,8 @@ public sealed class VersionEntries : IEnumerable<string>
 
     public VersionEntry this[string _] => new() { Version = _, UpdateId = this._[_] };
 
+    public bool Contains(string _) => this._.ContainsKey(_);
+
     public IEnumerator<string> GetEnumerator() => _.Keys.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

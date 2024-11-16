@@ -11,6 +11,7 @@ using Windows.ApplicationModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 /// <summary>
 /// Provides method to interact with Minecraft.
@@ -32,7 +33,7 @@ public static class Game
     [DllImport("Kernel32", CharSet = CharSet.Auto, SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     internal static extern bool DeleteFile(string lpFileName);
 
-    public static Package Package
+    static Package Package
     {
         get
         {
@@ -44,6 +45,26 @@ public static class Game
             return package;
         }
     }
+
+    public static async Task<string> VersionAsync()
+    {
+        var package = Package; using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
+
+        var path = XElement.Parse(await reader.ReadToEndAsync()).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value;
+        var version = FileVersionInfo.GetVersionInfo(Path.Combine(package.InstalledPath, path)).FileVersion;
+
+        return version.Substring(0, version.LastIndexOf('.'));
+    }
+
+    //  public static string Version
+    //  {
+    //  get
+    //   {
+    //  var _=     XElement.Parse(File.ReadAllText(Path.Combine(Package.InstalledPath, "AppxManifest.xml")));
+    //Console.WriteLine(_);
+    //     return string.Empty;
+    //  }
+    //  }
 
     /// <summary>
     /// Launches Minecraft &#38; waits for it to fully initialize.

@@ -8,9 +8,9 @@ static class Program
     {
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Flarial.Launcher");
         Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
-      
+        var _ = Minecraft.UWP.Game.VersionAsync().Result;
         Application.EnableVisualStyles();
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new Form());
     }

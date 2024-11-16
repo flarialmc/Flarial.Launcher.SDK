@@ -53,11 +53,15 @@ sealed class Versions : TabPage
 
         CancellationTokenSource source = default;
 
-        Application.ThreadExit += (_, _) => { try { source.Cancel(); } catch (Exception _) when (_ is ObjectDisposedException or NullReferenceException) { } };
-
-        _.Shown += async (_, _) =>
+        Application.ThreadExit += (_, _) =>
         {
-            foreach (var item in (entries = await VersionManager.GetAsync()).Reverse()) listBox.Items.Add(item);
+            try { source.Cancel(); }
+            catch (Exception _) when (_ is ObjectDisposedException or NullReferenceException) { }
+        };
+
+        listBox.VisibleChanged += (_, _) =>
+        {
+            foreach (var item in _.Entries.Reverse()) listBox.Items.Add(item);
             listBox.SelectedIndex = 0;
             panel.Enabled = true;
         };

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -52,22 +54,24 @@ sealed class Play : TabPage
         button.Click += async (_, _) =>
         {
             progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
-            button.Text = "Downloading...";
-
-            await Game.TerminateAsync();
-            await Client.DownloadAsync(checkBox.Checked, (_) =>
+           
+            if (_.Entries.Contains(await Game.VersionAsync()))
             {
-                if (progressBar.Value != _)
+                await Game.TerminateAsync();
+                await Client.DownloadAsync(checkBox.Checked, (_) =>
                 {
-                    if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
-                    progressBar.Value = _;
-                }
-            });
+                    if (progressBar.Value != _)
+                    {
+                        if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
+                        progressBar.Value = _;
+                    }
+                });
 
-            button.Text = "Waiting...";
-            progressBar.Value = 0;
-            progressBar.Style = ProgressBarStyle.Marquee;
-            await Client.ActivateAsync(checkBox.Checked);
+                button.Text = "Waiting...";
+                progressBar.Value = 0;
+                progressBar.Style = ProgressBarStyle.Marquee;
+                await Client.ActivateAsync(checkBox.Checked);
+            }
 
             progressBar.Visible = !(button.Enabled = checkBox.Enabled = true);
             button.Text = "Launch";
