@@ -5,9 +5,9 @@ using Windows.Management.Deployment;
 
 static class Global
 {
-    internal static readonly PackageManager PackageManager = new();
-
     internal static readonly HttpClient HttpClient = new();
+
+    internal static readonly PackageManager PackageManager = new();
 }
 
 readonly struct _ : IDisposable

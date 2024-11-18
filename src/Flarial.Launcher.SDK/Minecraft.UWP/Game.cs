@@ -3,12 +3,8 @@ namespace Minecraft.UWP;
 using System;
 using System.IO;
 using System.Linq;
-using Windows.System;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Management.Core;
-using Windows.ApplicationModel;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Xml.Linq;
@@ -18,33 +14,9 @@ using System.Xml.Linq;
 /// </summary>
 public static class Game
 {
-    static readonly ApplicationActivationManager ApplicationActivationManager = new();
+    internal static readonly Win32Exception ERROR_PROCESS_ABORTED = new(0x0000042B);
 
-    static readonly PackageDebugSettings PackageDebugSettings = new();
-
-    internal const int ERROR_INSTALL_PACKAGE_NOT_FOUND = unchecked((int)0x80073CF1);
-
-    internal const int ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE = unchecked((int)0x80073D10);
-
-    internal const int ERROR_PROCESS_ABORTED = 0x0000042B;
-
-    internal const int AO_NOERRORUI = 0x00000002;
-
-    [DllImport("Kernel32", CharSet = CharSet.Auto, SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    internal static extern bool DeleteFile(string lpFileName);
-
-    static Package Package
-    {
-        get
-        {
-            var package = Global.PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault();
-
-            if (package is null) Marshal.ThrowExceptionForHR(ERROR_INSTALL_PACKAGE_NOT_FOUND);
-            else if (package.Id.Architecture is not ProcessorArchitecture.X64) Marshal.ThrowExceptionForHR(ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE);
-
-            return package;
-        }
-    }
+    static async Task<App> GetAsync() => await App.GetAsync("Microsoft.MinecraftUWP_8wekyb3d8bbwe");
 
     /// <summary>
     /// Asynchronously obtain Minecraft's installed version.
@@ -52,7 +24,8 @@ public static class Game
     /// <returns>The version of Minecraft installed.</returns>
     public static async Task<string> VersionAsync()
     {
-        var package = Package; using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
+        var package = (await GetAsync()).Package;
+        using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
 
         var path = XElement.Parse(await reader.ReadToEndAsync()).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value;
         var version = FileVersionInfo.GetVersionInfo(Path.Combine(package.InstalledPath, path)).FileVersion;
@@ -64,46 +37,35 @@ public static class Game
     /// Launches Minecraft &#38; waits for it to fully initialize.
     /// </summary>
     /// <returns>The PID of the game.</returns>
-    public static int Activate()
+    public static async Task<int> LaunchAsync() => await Launch(true);
+
+    internal static async Task<int> Launch(bool _)
     {
-        var package = Package;
+        var app = await GetAsync();
 
-        Marshal.ThrowExceptionForHR(PackageDebugSettings.DisableDebugging(package.Id.FullName));
-        Marshal.ThrowExceptionForHR(PackageDebugSettings.GetPackageExecutionState(package.Id.FullName, out var packageExecutionState));
-        Marshal.ThrowExceptionForHR(PackageDebugSettings.EnableDebugging(package.Id.FullName, default, default));
+        var path = ApplicationDataManager.CreateForPackageFamily(app.Package.Id.FamilyName).LocalFolder.Path;
+        TaskCompletionSource<bool> source = new();
+        if (app.Running && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock"))) source.TrySetResult(true);
 
-        var path = ApplicationDataManager.CreateForPackageFamily(package.Id.FamilyName).LocalFolder.Path;
-        var state = packageExecutionState is not (PackageExecutionState.Unknown or PackageExecutionState.Terminated);
+        using FileSystemWatcher watcher = new(path)
+        {
+            NotifyFilter = NotifyFilters.FileName,
+            IncludeSubdirectories = true,
+            EnableRaisingEvents = true
+        };
+        watcher.Deleted += (_, e) =>
+        {
+            if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase))
+                source.TrySetResult(true);
+        };
 
-        var _ = Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock");
-        if (state) state = !File.Exists(_);
-        else { DeleteFile(_); DeleteFile(Path.Combine(path, @"games\com.mojang\minecraftpe\menu_load_lock")); }
-
-        using ManualResetEventSlim @event = new(state);
-        using FileSystemWatcher watcher = new(path) { NotifyFilter = NotifyFilters.FileName, IncludeSubdirectories = true, EnableRaisingEvents = true };
-        watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
-
-        Marshal.ThrowExceptionForHR(ApplicationActivationManager.ActivateApplication("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App", default, AO_NOERRORUI, out var processId));
-
-        using var process = Process.GetProcessById(processId);
-        process.EnableRaisingEvents = true; process.Exited += (_, _) => throw new Win32Exception(ERROR_PROCESS_ABORTED);
-
-        @event.Wait(); return processId;
+        using var process = _ ? await Task.Run(app.Launch) : app.Launch();
+        process.EnableRaisingEvents = true; process.Exited += (_, _) => throw ERROR_PROCESS_ABORTED; await source.Task;
+        return process.Id;
     }
 
     /// <summary>
-    /// Terminates Minecraft.
+    ///  Asynchronously terminate Minecraft.
     /// </summary>
-    public static void Terminate() => PackageDebugSettings.TerminateAllProcesses(Package.Id.FullName);
-
-    /// <summary>
-    /// Asynchronously launches Minecraft &#38; waits for it to fully initialize.
-    /// </summary>
-    /// <returns>The PID of the game.</returns>
-    public static async Task<int> ActivateAsync() => await Task.Run(Activate).ConfigureAwait(false);
-
-    /// <summary>
-    ///  Asynchronously terminates Minecraft.
-    /// </summary>
-    public static async Task TerminateAsync() => await Task.Run(Terminate).ConfigureAwait(false);
+    public static async Task TerminateAsync() => await Task.Run(async () => (await GetAsync()).Terminate());
 }

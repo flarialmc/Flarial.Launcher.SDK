@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using Minecraft.UWP;
 using static Unmanaged;
 
 /// <summary>
@@ -29,13 +30,7 @@ public static class Injector
         finally { FreeLibrary(hModule); }
     }
 
-    /// <summary>
-    /// Inject a dynamic link library into a process via its PID.
-    /// </summary>
-    /// <param name="processId">PID for the target process.</param>
-    /// <param name="path">Path to the target dynamic link library.</param>
-    /// <exception cref="Win32Exception"></exception>
-    public static void Inject(int processId, string path)
+    static void Inject(int processId, string path)
     {
         FileInfo info = new(path = Path.GetFullPath(path));
         var security = info.GetAccessControl();
@@ -70,10 +65,9 @@ public static class Injector
     }
 
     /// <summary>
-    /// Asynchronously inject a dynamic link library into a process via its PID.
+    /// Asynchronously inject a dynamic link library into Minecraft.
     /// </summary>
-    /// <param name="processId">PID for the target process.</param>
     /// <param name="path">Path to the target dynamic link library.</param>
     /// <returns></returns>
-    public static async Task InjectAsync(int processId, string path) =>await Task.Run(() => Inject(processId, path)); 
+    public static async Task InjectAsync(string path) => await Task.Run(async () => Inject(await Game.Launch(false), path));
 }

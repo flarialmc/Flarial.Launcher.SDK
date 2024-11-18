@@ -33,5 +33,5 @@ public static class Client
     /// </summary>
     /// <param name="_">Specify <c>true</c> to use Flarial Client's Beta.</param>
     /// <returns></returns>
-    public static async Task ActivateAsync(bool _ = false) => await Task.Run(() => Injector.Inject(Game.Activate(), (_ ? Beta : Release).Item2));
+    public static async Task ActivateAsync(bool _ = false) => await Injector.InjectAsync((_ ? Beta : Release).Item2);
 }
