@@ -25,12 +25,12 @@ public static class Game
     public static async Task<string> VersionAsync()
     {
         var package = (await GetAsync()).Package;
-        using StreamReader reader = new(File.OpenRead(Path.Combine(package.InstalledPath, "AppxManifest.xml")));
-
-        var path = XElement.Parse(await reader.ReadToEndAsync()).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value;
-        var version = FileVersionInfo.GetVersionInfo(Path.Combine(package.InstalledPath, path)).FileVersion;
-
-        return version.Substring(0, version.LastIndexOf('.'));
+        return await Task.Run(() =>
+        {
+            var path = XElement.Parse(File.ReadAllText(Path.Combine(package.InstalledPath, "AppxManifest.xml"))).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value;
+            var version = FileVersionInfo.GetVersionInfo(Path.Combine(package.InstalledPath, path)).FileVersion;
+            return version.Substring(0, version.LastIndexOf('.'));
+        });
     }
 
     /// <summary>
