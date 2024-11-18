@@ -48,6 +48,8 @@ public sealed class VersionEntries : IEnumerable<string>
 /// </summary>
 public sealed class VersionEntry
 {
+    static readonly PackageManager PackageManager = new();
+
     internal string Version, UpdateId;
 
     readonly AddPackageOptions Options = new() { ForceAppShutdown = true, ForceUpdateFromAnyVersion = true };
@@ -81,7 +83,7 @@ public sealed class VersionEntry
 
         var value = XElement.Parse(await message.Content.ReadAsStringAsync()).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value;
 
-        var operation = Global.PackageManager.AddPackageByUriAsync(new Uri(value), Options);
+        var operation = PackageManager.AddPackageByUriAsync(new Uri(value), Options);
         try
         {
             if (action is not null) await operation.AsTask(token, new Progress<DeploymentProgress>((_) => { if (_.state is DeploymentProgressState.Processing) action((int)_.percentage); }));
