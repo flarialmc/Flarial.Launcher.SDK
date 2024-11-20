@@ -54,9 +54,11 @@ sealed class Play : TabPage
         button.Click += async (_, _) =>
         {
             progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
-           
+
             if (_.Entries.Contains(await Game.VersionAsync()))
             {
+                button.Text = "Launching...";
+
                 await Game.TerminateAsync();
                 await Client.DownloadAsync(checkBox.Checked, (_) =>
                 {
@@ -67,9 +69,7 @@ sealed class Play : TabPage
                     }
                 });
 
-                button.Text = "Waiting...";
-                progressBar.Value = 0;
-                progressBar.Style = ProgressBarStyle.Marquee;
+                progressBar.Value = 0; progressBar.Style = ProgressBarStyle.Marquee;
                 await Client.ActivateAsync(checkBox.Checked);
             }
 

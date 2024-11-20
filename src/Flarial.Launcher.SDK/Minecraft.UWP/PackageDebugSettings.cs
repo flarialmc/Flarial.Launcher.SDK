@@ -3,39 +3,51 @@ namespace Minecraft.UWP;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-enum PackageExecutionState { Unknown, Running, Suspending, Suspended, Terminated }
-
 [ComImport, Guid("F27C3930-8029-4AD1-94E3-3DBA417810C1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 interface IPackageDebugSettings
 {
+    [PreserveSig]
     int EnableDebugging(string packageFullName, string debuggerCommandLine, string environment);
 
+    [PreserveSig]
     int DisableDebugging(string packageFullName);
 
+    [PreserveSig]
     int Suspend(string packageFullName);
 
+    [PreserveSig]
     int Resume(string packageFullName);
 
+    [PreserveSig]
     int TerminateAllProcesses(string packageFullName);
 
+    [PreserveSig]
     int SetTargetSessionId(ulong sessionId);
 
+    [PreserveSig]
     int EnumerateBackgroundTasks(string packageFullName, nint taskCount, nint taskIds, nint taskNames);
 
+    [PreserveSig]
     int ActivateBackgroundTask(nint taskId);
 
+    [PreserveSig]
     int StartServicing(string packageFullName);
 
+    [PreserveSig]
     int StopServicing(string packageFullName);
 
     int StartSessionRedirection(string packageFullName, ulong sessionId);
 
+    [PreserveSig]
     int StopSessionRedirection(string packageFullName);
 
-    int GetPackageExecutionState(string packageFullName, out PackageExecutionState packageExecutionState);
+    [PreserveSig]
+    int GetPackageExecutionState(string packageFullName, nint packageExecutionState);
 
+    [PreserveSig]
     int RegisterForPackageStateChanges(string packageFullName, nint pPackageExecutionStateChangeNotification, nint pdwCookie);
 
+    [PreserveSig]
     int UnregisterForPackageStateChanges(uint dwCookie);
 }
 
@@ -79,7 +91,7 @@ sealed class PackageDebugSettings : IPackageDebugSettings
     public extern int StopSessionRedirection(string packageFullName);
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    public extern int GetPackageExecutionState(string packageFullName, out PackageExecutionState packageExecutionState);
+    public extern int GetPackageExecutionState(string packageFullName, nint packageExecutionState);
 
     [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
     public extern int RegisterForPackageStateChanges(string packageFullName, nint pPackageExecutionStateChangeNotification, nint pdwCookie);

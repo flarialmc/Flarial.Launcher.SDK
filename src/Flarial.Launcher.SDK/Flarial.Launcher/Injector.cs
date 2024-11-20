@@ -41,16 +41,13 @@ public static class Injector
         try
         {
             hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, processId);
-            if (hProcess == default)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+            if (hProcess == default) throw new Win32Exception(Marshal.GetLastWin32Error());
 
             var dwSize = sizeof(char) * (path.Length + 1);
             lpBaseAddress = VirtualAllocEx(hProcess, default, dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-            if (lpBaseAddress == default)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+            if (lpBaseAddress == default) throw new Win32Exception(Marshal.GetLastWin32Error());
 
-            if (!WriteProcessMemory(hProcess, lpBaseAddress, Marshal.StringToHGlobalUni(path), dwSize, default))
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+            if (!WriteProcessMemory(hProcess, lpBaseAddress, Marshal.StringToHGlobalUni(path), dwSize, default)) throw new Win32Exception(Marshal.GetLastWin32Error());
 
             hThread = CreateRemoteThread(hProcess, default, default, lpStartAddress, lpBaseAddress, default, default);
             if (hThread == default) throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -58,7 +55,7 @@ public static class Injector
         }
         finally
         {
-            VirtualFreeEx(hProcess, lpBaseAddress, 0, MEM_RELEASE);
+            VirtualFreeEx(hProcess, lpBaseAddress, default, MEM_RELEASE);
             CloseHandle(hThread);
             CloseHandle(hProcess);
         }
@@ -67,7 +64,7 @@ public static class Injector
     /// <summary>
     /// Asynchronously inject a dynamic link library into Minecraft.
     /// </summary>
-    /// <param name="path">Path to the target dynamic link library.</param>
+    /// <param name="path">Path to the dynamic link library.</param>
     /// <returns></returns>
-    public static async Task InjectAsync(string path) => await Task.Run(async () => Inject(await Game.Launch(false), path));
+    public static async Task InjectAsync(string path) => await Task.Run(async () => Inject(await Game.Launch(), path));
 }

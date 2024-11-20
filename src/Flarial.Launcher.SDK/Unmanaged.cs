@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
 
+[assembly: DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+
 static class Unmanaged
 {
     internal const int LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800;
@@ -14,33 +16,33 @@ static class Unmanaged
 
     internal const int PAGE_EXECUTE_READWRITE = 0x40;
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern nint OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern int WaitForSingleObject(nint hHandle, int dwMilliseconds);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern bool CloseHandle(nint hObject);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern nint VirtualAllocEx(nint hProcess, nint lpAddress, int dwSize, int flAllocationType, int flProtect);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern bool WriteProcessMemory(nint hProcess, nint lpBaseAddress, nint lpBuffer, int nSize, nint lpNumberOfBytesWritten);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern nint CreateRemoteThread(nint hProcess, nint lpThreadAttributes, int dwStackSize, nint lpStartAddress, nint lpParameter, int dwCreationFlags, nint lpThreadId);
 
-    [DllImport("Kernel32", CharSet = CharSet.Auto, SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern nint LoadLibraryEx(string lpLibFileName, nint hFile, int dwFlags);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern bool FreeLibrary(nint hLibModule);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern nint GetProcAddress(nint hModule, string lpProcName);
 
-    [DllImport("Kernel32", SetLastError = true), DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("Kernel32", SetLastError = true)]
     internal static extern bool VirtualFreeEx(nint hProcess, nint lpAddress, int dwSize, int dwFreeType);
 }

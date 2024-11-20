@@ -14,7 +14,7 @@ using System.Xml.Linq;
 /// </summary>
 public static class Game
 {
-    internal static readonly Win32Exception ERROR_PROCESS_ABORTED = new(0x0000042B);
+    static readonly Win32Exception ERROR_PROCESS_ABORTED = new(0x0000042B);
 
     static async Task<App> GetAsync() => await App.GetAsync("Microsoft.MinecraftUWP_8wekyb3d8bbwe");
 
@@ -37,14 +37,13 @@ public static class Game
     /// Launches Minecraft &#38; waits for it to fully initialize.
     /// </summary>
     /// <returns>The PID of the game.</returns>
-    public static async Task<int> LaunchAsync() => await Launch(true);
+    public static async Task<int> LaunchAsync() => await Task.Run(Launch);
 
-    internal static async Task<int> Launch(bool _)
+    internal static async Task<int> Launch()
     {
         var app = await GetAsync();
 
-        var path = ApplicationDataManager.CreateForPackageFamily(app.Package.Id.FamilyName).LocalFolder.Path;
-        TaskCompletionSource<bool> source = new();
+        TaskCompletionSource<bool> source = new(); var path = ApplicationDataManager.CreateForPackageFamily(app.Package.Id.FamilyName).LocalFolder.Path;
         if (app.Running && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock"))) source.TrySetResult(true);
 
         using FileSystemWatcher watcher = new(path)
@@ -59,7 +58,7 @@ public static class Game
                 source.TrySetResult(true);
         };
 
-        using var process = _ ? await Task.Run(app.Launch) : app.Launch();
+        using var process = app.Launch();
         process.EnableRaisingEvents = true; process.Exited += (_, _) => throw ERROR_PROCESS_ABORTED; await source.Task;
         return process.Id;
     }

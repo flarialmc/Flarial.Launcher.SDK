@@ -6,10 +6,13 @@ using System.Runtime.CompilerServices;
 [ComImport, Guid("2E941141-7F97-4756-BA1D-9DECDE894A3D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 interface IApplicationActivationManager
 {
+    [PreserveSig]
     int ActivateApplication(string appUserModelId, string arguments, int options, out int processId);
 
+    [PreserveSig]
     int ActivateForFile(string appUserModelId, nint itemArray, string verb, out int processId);
 
+    [PreserveSig]
     int ActivateForProtocol(string appUserModelId, nint itemArray, out int processId);
 }
 

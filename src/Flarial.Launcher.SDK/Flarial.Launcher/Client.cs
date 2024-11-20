@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Minecraft.UWP;
 
 /// <summary>
 /// Provides method to interact with Flarial Client's dynamic link library.
@@ -32,7 +31,7 @@ public static class Client
         }
     }
 
-    static readonly (string, string) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.dll");
+    static readonly (string, string) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.Release.dll");
 
     static readonly (string, string) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Client\Flarial.Client.Beta.dll");
 
