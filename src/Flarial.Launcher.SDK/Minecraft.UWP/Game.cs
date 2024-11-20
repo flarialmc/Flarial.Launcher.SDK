@@ -44,17 +44,8 @@ public static class Game
         TaskCompletionSource<bool> source = new(); var path = ApplicationDataManager.CreateForPackageFamily(app.Package.Id.FamilyName).LocalFolder.Path;
         if (app.Running && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock"))) source.TrySetResult(true);
 
-        using FileSystemWatcher watcher = new(path)
-        {
-            NotifyFilter = NotifyFilters.FileName,
-            IncludeSubdirectories = true,
-            EnableRaisingEvents = true
-        };
-        watcher.Deleted += (_, e) =>
-        {
-            if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase))
-                source.TrySetResult(true);
-        };
+        using FileSystemWatcher watcher = new(path) { NotifyFilter = NotifyFilters.FileName, IncludeSubdirectories = true, EnableRaisingEvents = true };
+        watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) source.TrySetResult(true); };
 
         using var process = app.Launch();
         process.EnableRaisingEvents = true; process.Exited += (_, _) => throw ERROR_PROCESS_ABORTED; await source.Task;
