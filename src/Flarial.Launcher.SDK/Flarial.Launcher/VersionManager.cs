@@ -128,11 +128,8 @@ public static class VersionManager
         var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
         using var stream = await Global.HttpClient.GetStreamAsync(Releases);
-        foreach (var _ in (await Task.Run(() =>
-        {
-            using var reader = JsonReaderWriterFactory.CreateJsonReader(stream, XmlDictionaryReaderQuotas.Max);
-            return XElement.Load(reader);
-        })).Elements())
+        using var reader = JsonReaderWriterFactory.CreateJsonReader(stream, XmlDictionaryReaderQuotas.Max);
+        foreach (var _ in XElement.Load(reader).Elements())
         {
             var substrings = _.Value.Split(' ');
 
