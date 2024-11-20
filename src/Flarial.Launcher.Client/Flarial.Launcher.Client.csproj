@@ -10,8 +10,8 @@
     <UseWindowsForms>true</UseWindowsForms>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <AssemblyTitle>Flarial Launcher SDK Tests</AssemblyTitle>
-    <Product>Flarial Launcher SDK Tests</Product>
+    <AssemblyTitle>Flarial Launcher Client</AssemblyTitle>
+    <Product>Flarial Launcher Client</Product>
     <Copyright>Copyright (C) 2024</Copyright>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
