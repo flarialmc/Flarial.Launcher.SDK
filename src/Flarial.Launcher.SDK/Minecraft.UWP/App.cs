@@ -27,10 +27,8 @@ sealed class App
     public static async Task<App> GetAsync(string packageFamilyName)
     {
         var _ = (await AppDiagnosticInfo.RequestInfoForPackageAsync(packageFamilyName)).FirstOrDefault();
-
         if (_ is null) throw ERROR_INSTALL_PACKAGE_NOT_FOUND;
         else if (_.AppInfo.Package.Id.Architecture is not ProcessorArchitecture.X64) throw ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE;
-
         return new(_);
     }
 
