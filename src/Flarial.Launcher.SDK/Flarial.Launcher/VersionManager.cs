@@ -7,11 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 using Windows.Management.Deployment;
 
@@ -127,9 +125,7 @@ public static class VersionManager
         Dictionary<string, string> dictionary = [];
         var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
-        using var stream = await Global.HttpClient.GetStreamAsync(Releases);
-        using var reader = JsonReaderWriterFactory.CreateJsonReader(stream, XmlDictionaryReaderQuotas.Max);
-        foreach (var _ in XElement.Load(reader).Elements())
+        foreach (var _ in await JsonElement.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases)))
         {
             var substrings = _.Value.Split(' ');
 

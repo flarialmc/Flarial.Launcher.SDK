@@ -3,16 +3,41 @@ namespace Flarial.Launcher;
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Minecraft.UWP;
 
 /// <summary>
 /// Provides method to interact with Flarial Client's dynamic link library.
 /// </summary>
 public static class Client
 {
+    static Client() => Directory.CreateDirectory("Client");
+
     static readonly int Size = Environment.SystemPageSize;
 
-    internal static async Task GetAsync(this HttpClient source, string requestUri, string path, Action<int> action = default)
+    static readonly HashAlgorithm Algorithm = SHA256.Create();
+
+    static readonly object Object = new();
+
+    static readonly (string, string) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.Release.dll");
+
+    static readonly (string, string) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Client\Flarial.Client.Beta.dll");
+
+    const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
+
+    static async Task<bool> VerifyAsync(string path, bool _ = false)
+    {
+        if (!File.Exists(path)) return false;
+        return await Task.Run(async () =>
+        {
+            using var stream = File.OpenRead(path);
+            var hash = JsonElement.Parse(await Global.HttpClient.GetStreamAsync(Hashes))[_ ? "Beta" : "Release"].Value;
+            lock (Object) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
+        });
+    }
+
+    static async Task GetAsync(this HttpClient source, string requestUri, string path, Action<int> action = default)
     {
         using var message = await source.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead);
         message.EnsureSuccessStatusCode();
@@ -31,12 +56,6 @@ public static class Client
         }
     }
 
-    static readonly (string, string) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.Release.dll");
-
-    static readonly (string, string) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Client\Flarial.Client.Beta.dll");
-
-    static Client() => Directory.CreateDirectory("Client");
-
     /// <summary>
     /// Asynchronously download Flarial Client's dynamic link library.
     /// </summary>
@@ -46,7 +65,11 @@ public static class Client
     public static async Task DownloadAsync(bool _ = false, Action<int> action = default)
     {
         var (requestUri, path) = _ ? Beta : Release;
-        await Global.HttpClient.GetAsync(requestUri, path, action);
+        if (!await VerifyAsync(path, _))
+        {
+            await Game.TerminateAsync();
+            await Global.HttpClient.GetAsync(requestUri, path, action);
+        }
     }
 
     /// <summary>
