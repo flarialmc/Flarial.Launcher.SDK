@@ -119,7 +119,7 @@ public static class VersionManager
     /// <summary>
     /// Asynchronously gets a list of Minecraft versions supported by Flarial Client.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A list of Minecraft versions supported by Flarial Client.</returns>
     public static async Task<VersionEntries> GetAsync()
     {
         Dictionary<string, string> dictionary = [];
