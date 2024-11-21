@@ -5,7 +5,6 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Minecraft.UWP;
 
 /// <summary>
 /// Provides method to interact with Flarial Client's dynamic link library.
@@ -65,11 +64,7 @@ public static class Client
     public static async Task DownloadAsync(bool _ = false, Action<int> action = default)
     {
         var (requestUri, path) = _ ? Beta : Release;
-        if (!await VerifyAsync(path, _))
-        {
-            await Game.TerminateAsync();
-            await Global.HttpClient.GetAsync(requestUri, path, action);
-        }
+        if (!await VerifyAsync(path, _))    await Global.HttpClient.GetAsync(requestUri, path, action);
     }
 
     /// <summary>

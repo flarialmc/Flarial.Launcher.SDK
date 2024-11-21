@@ -54,7 +54,8 @@ sealed class Play : TabPage
             if (_.Entries.Contains(await Game.VersionAsync()))
             {
                 button.Text = "Launching...";
-
+                
+                await Game.TerminateAsync();
                 await Client.DownloadAsync(checkBox.Checked, (_) =>
                 {
                     if (progressBar.Value != _)
