@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net481</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NoWarn>IDE0130</NoWarn>
+    <Optimize>true</Optimize>
+    <PublishRelease>true</PublishRelease>
+
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
+    <Product>Flarial Launcher SDK</Product>
+    <Copyright>Copyright (C) 2024</Copyright>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml">
+      <LogicalName>GetExtendedUpdateInfo2.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.2" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+</Project>
