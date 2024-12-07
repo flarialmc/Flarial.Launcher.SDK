@@ -16,7 +16,7 @@ public static class Game
 {
     static readonly Win32Exception ERROR_PROCESS_ABORTED = new(0x0000042B);
 
-    internal static async Task<App> GetAsync() => await App.GetAsync("Microsoft.MinecraftUWP_8wekyb3d8bbwe");
+    internal static async Task<App> GetAsync() => await App.GetAsync(Global.PackageFamilyName);
 
     /// <summary>
     /// Asynchronously obtain Minecraft's installed version.

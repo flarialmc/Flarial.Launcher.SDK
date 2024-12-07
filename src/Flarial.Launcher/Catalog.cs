@@ -3,6 +3,7 @@ namespace Flarial.Launcher;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -98,13 +99,13 @@ public sealed class Catalog : IEnumerable<string>
         }));
     }
 
-    static readonly PackageManager PackageManager = new();
-
     static readonly AddPackageOptions Options = new()
     {
         ForceAppShutdown = true,
         ForceUpdateFromAnyVersion = true
     };
+
+    static readonly Win32Exception ERROR_INSTALL_FAILED = new(unchecked((int)0x80073CF9));
 
     /// <summary>
     /// Asynchronously starts the installation of a version.
@@ -112,7 +113,11 @@ public sealed class Catalog : IEnumerable<string>
     /// <param name="_">The version to be installed.</param>
     /// <param name="action">Callback for installation progress.</param>
     /// <returns>An installation request.</returns>
-    public async Task<Request> InstallAsync(string _, Action<int> action = default) => new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
+    public async Task<Request> InstallAsync(string _, Action<int> action = default) =>
+    Global.PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false 
+    ? throw ERROR_INSTALL_FAILED 
+    : new(Global.PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
+
 
     /// <summary>
     /// Determines whether the specified version exists.

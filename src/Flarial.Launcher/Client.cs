@@ -64,12 +64,9 @@ public static class Client
         path = Path.GetFullPath(path);
         var app = await Game.GetAsync();
         using var process = app.Process;
-
         if (process is not null)
-        {
             foreach (string value in process.Modules.Cast<ProcessModule>().Select(_ => _.FileName))
                 if (path.Equals(value, StringComparison.OrdinalIgnoreCase)) app.Terminate();
-        }
         return app;
     }
 
@@ -94,7 +91,7 @@ public static class Client
     /// <param name="_">Specify <c>true</c> to use Flarial Client's Beta.</param>
     public static async Task LaunchAsync(bool _ = false) => await Task.Run(async () =>
     {
-        await LoadedAsync((_ ? Release : Beta).Path);
-        Injector.Inject(await Game.Launch(), (_ ? Beta : Release).Path);
+        var path = (_ ? Release : Beta).Path;
+        Injector.Inject(await Game.Launch(await LoadedAsync(path)), path);
     });
 }
