@@ -1,7 +1,7 @@
 namespace Flarial.Launcher;
 
 using System;
-using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -35,7 +35,7 @@ public static class Client
         return await Task.Run(async () =>
         {
             using var stream = File.OpenRead(path);
-            var hash = JsonElement.Parse(await Global.HttpClient.GetStreamAsync(Hashes))[_ ? "Beta" : "Release"].Value;
+            var hash = Node.Get(await Global.HttpClient.GetStreamAsync(Hashes))[_ ? "Beta" : "Release"].Value;
             lock (Object) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
         });
     }

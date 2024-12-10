@@ -15,10 +15,10 @@ public sealed class Request
 
     readonly Task Task;
 
-    internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> operation, Action<int> action = default)
+    internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> _, Action<int> action = default)
     {
-        Operation = operation;
-        Task = action is null ? operation.AsTask() : operation.AsTask(new Progress<DeploymentProgress>(_ =>
+        Operation = _;
+        Task = action is null ? _.AsTask() : _.AsTask(new Progress<DeploymentProgress>(_ =>
         {
             if (_.state is DeploymentProgressState.Processing)
                 action((int)_.percentage);
