@@ -25,8 +25,6 @@ sealed class Node : IEnumerable<Node>
 
     internal Node this[string _] => Type is Node._.Object ? new(Element.Elements().First(value => Key(value) == _)) : throw Exception;
 
-    internal Node this[int _] => Type is Node._.Array ? new(Element.Elements().ElementAt(_)) : throw Exception;
-
     internal string Value => Type is @_.Value ? Element.Value : throw Exception;
 
     static string Key(XElement _) => string.IsNullOrEmpty(_.Name.NamespaceName) ? _.Name.LocalName : _.Attribute("item").Value;
