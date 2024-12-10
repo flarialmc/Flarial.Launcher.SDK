@@ -30,18 +30,17 @@ sealed class App
 
     internal static async Task<App> GetAsync(string packageFamilyName)
     {
-        var _ = (await AppDiagnosticInfo.RequestInfoForPackageAsync(packageFamilyName)).FirstOrDefault();
-        if (_ is null) throw ERROR_INSTALL_PACKAGE_NOT_FOUND;
-        else if (_.AppInfo.Package.Id.Architecture is not ProcessorArchitecture.X64) throw ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE;
-        return new(_);
+        var _ = (await AppDiagnosticInfo.RequestInfoForPackageAsync(packageFamilyName)).FirstOrDefault() ?? throw ERROR_INSTALL_PACKAGE_NOT_FOUND;
+        return _.AppInfo.Package.Id.Architecture is not ProcessorArchitecture.X64
+        ? throw ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE : new(_);
     }
 
     internal Process Process
     {
         get
         {
-            var _ = ProcessDiagnosticInfos.FirstOrDefault(); if (_ is null) return null;
-            return Process.GetProcessById((int)_.ProcessId);
+            var _ = ProcessDiagnosticInfos.FirstOrDefault();
+            return _ is not null ? Process.GetProcessById((int)_.ProcessId) : null;
         }
     }
 
