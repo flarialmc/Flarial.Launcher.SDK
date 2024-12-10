@@ -1,14 +1,14 @@
 namespace Flarial.Launcher;
 
-using System.ComponentModel;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Threading;
-using System.Threading.Tasks;
 using Minecraft.UWP;
 using static Unmanaged;
+using System.Threading;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Security.Principal;
+using System.Security.AccessControl;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Provides methods for injecting dynamic link libraries.

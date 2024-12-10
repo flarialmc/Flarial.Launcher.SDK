@@ -1,7 +1,6 @@
 namespace Flarial.Launcher;
 
 using System;
-using System.Runtime.Serialization.Json;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;

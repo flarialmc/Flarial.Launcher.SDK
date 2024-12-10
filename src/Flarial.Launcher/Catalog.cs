@@ -1,18 +1,17 @@
 namespace Flarial.Launcher;
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using System.Text;
 using System.Linq;
+using System.Xml.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Text;
+using System.Collections;
+using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Collections.Generic;
 using Windows.Management.Deployment;
-using System.Runtime.Serialization.Json;
 
 /// <summary>
 /// Provides methods to manage Minecraft versions compatible with Flarial Client.
@@ -115,8 +114,8 @@ public sealed class Catalog : IEnumerable<string>
     /// <param name="action">Callback for installation progress.</param>
     /// <returns>An installation request.</returns>
     public async Task<Request> InstallAsync(string _, Action<int> action = default) =>
-    Global.PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false 
-    ? throw ERROR_INSTALL_FAILED 
+    Global.PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false
+    ? throw ERROR_INSTALL_FAILED
     : new(Global.PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
 
 

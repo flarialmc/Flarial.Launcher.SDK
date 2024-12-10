@@ -1,13 +1,13 @@
 namespace Minecraft.UWP;
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
+using Windows.System;
+using System.Diagnostics;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.System;
+using System.Collections.Generic;
 using Windows.System.Diagnostics;
 
 sealed class App

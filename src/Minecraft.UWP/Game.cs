@@ -3,11 +3,11 @@ namespace Minecraft.UWP;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Windows.Management.Core;
+using System.Xml.Linq;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Xml.Linq;
+using System.Threading.Tasks;
+using Windows.Management.Core;
 
 /// <summary>
 /// Provides methods to interact with Minecraft.
