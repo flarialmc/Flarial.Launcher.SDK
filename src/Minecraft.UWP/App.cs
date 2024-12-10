@@ -35,14 +35,7 @@ sealed class App
         ? throw ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE : new(_);
     }
 
-    internal Process Process
-    {
-        get
-        {
-            var _ = ProcessDiagnosticInfos.FirstOrDefault();
-            return _ is not null ? Process.GetProcessById((int)_.ProcessId) : null;
-        }
-    }
+    internal Process Process => ProcessDiagnosticInfos.FirstOrDefault() is { ProcessId: var processId } ? Process.GetProcessById((int)processId) : null;
 
     internal bool Running => ProcessDiagnosticInfos.Any();
 
