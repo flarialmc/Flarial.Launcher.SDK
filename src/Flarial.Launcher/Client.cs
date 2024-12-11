@@ -88,9 +88,5 @@ public static class Client
     /// Asynchronously launch Minecraft &#38; inject Flarial Client's dynamic link library.
     /// </summary>
     /// <param name="_">Specify <c>true</c> to use Flarial Client's Beta.</param>
-    public static async Task LaunchAsync(bool _ = false) => await Task.Run(async () =>
-    {
-        var path = (_ ? Release : Beta).Path;
-        Injector.Inject(await Game.Launch(await LoadedAsync(path)), path);
-    });
+    public static async Task LaunchAsync(bool _ = false) => await Task.Run(async () => Injector.Inject(await Game.Launch(await LoadedAsync((_ ? Release : Beta).Path)), (_ ? Beta : Release).Path));
 }
