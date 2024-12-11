@@ -31,7 +31,6 @@ sealed class Play : TabPage
         {
             Text = "Beta",
             AutoSize = true,
-            Checked = true,
             Anchor = AnchorStyles.None
         };
 
