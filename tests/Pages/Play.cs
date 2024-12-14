@@ -50,12 +50,10 @@ sealed class Play : TabPage
 
         button.Click += async (_, _) =>
         {
-            progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
-
             if (_.Catalog.Contains(await Game.VersionAsync()))
             {
-                button.Text = "Launching...";
-                
+                button.Text = "Launching..."; progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
+
                 await Client.DownloadAsync(checkBox.Checked, (_) =>
                 {
                     if (progressBar.Value != _)

@@ -24,10 +24,10 @@ public static class Game
     /// <returns>The version of Minecraft installed.</returns>
     public static async Task<string> VersionAsync() => await Task.Run(async () =>
     {
-        var package = (await GetAsync()).Package;
-        var path = XElement.Parse(File.ReadAllText(Path.Combine(package.InstalledPath, "AppxManifest.xml"))).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value;
-        var version = FileVersionInfo.GetVersionInfo(Path.Combine(package.InstalledPath, path)).FileVersion;
-        return version.Substring(0, version.LastIndexOf('.'));
+        var path = (await GetAsync()).Package.InstalledPath;
+        using var stream = File.OpenRead(Path.Combine(path, "AppxManifest.xml"));
+        var _ = FileVersionInfo.GetVersionInfo(Path.Combine(path, XElement.Load(stream).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value)).FileVersion;
+        return _.Substring(0, _.LastIndexOf('.'));
     });
 
     /// <summary>
