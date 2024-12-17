@@ -62,7 +62,7 @@ public static class Client
         .Any(_ =>
         {
             using var process = Process.GetProcessById((int)_.ProcessId);
-            foreach (ProcessModule module in process.Modules) if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase)) return true;
+            foreach (ProcessModule module in process.Modules) using (module) if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase)) return true;
             return false;
         });
     }
