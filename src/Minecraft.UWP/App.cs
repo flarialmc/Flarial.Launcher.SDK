@@ -3,7 +3,6 @@ namespace Minecraft.UWP;
 using System.Linq;
 using Windows.System;
 using System.Diagnostics;
-using Windows.Foundation;
 using Windows.ApplicationModel;
 
 sealed class App(string _)
@@ -18,15 +17,7 @@ sealed class App(string _)
 
     internal Package Package => AppInfo.Package;
 
-    internal bool Running
-    {
-        get
-        {
-            var _ = AppDiagnosticInfo.RequestInfoForAppAsync(AppInfo.AppUserModelId);
-            do if (_.Status is AsyncStatus.Error) throw _.ErrorCode; while (_.Status is AsyncStatus.Started);
-            return _.GetResults().SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos())).Any();
-        }
-    }
+    internal bool Running => AppDiagnosticInfo.RequestInfoForAppAsync(AppInfo.AppUserModelId).Get().SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos())).Any();
 
     internal Process Launch()
     {

@@ -14,7 +14,7 @@ using Windows.Management.Core;
 /// </summary>
 public static class Game
 {
-    static readonly App App = new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App");
+    static readonly App App = new(Global.AppUserModelId);
 
     /// <summary>
     /// Asynchronously obtain Minecraft's installed version.

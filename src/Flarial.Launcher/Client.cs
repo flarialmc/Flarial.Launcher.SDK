@@ -56,9 +56,9 @@ public static class Client
 
     static bool Loaded(string path)
     {
-        path = Path.GetFullPath(path); var _ = AppDiagnosticInfo.RequestInfoForPackageAsync(Global.PackageFamilyName);
-        do if (_.Status is AsyncStatus.Error) throw _.ErrorCode; while (_.Status is AsyncStatus.Started);
-        return _.GetResults().SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos()))
+        path = Path.GetFullPath(path);
+        return AppDiagnosticInfo.RequestInfoForPackageAsync(Global.PackageFamilyName).Get()
+        .SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos()))
         .Any(_ =>
         {
             using var process = Process.GetProcessById((int)_.ProcessId);
