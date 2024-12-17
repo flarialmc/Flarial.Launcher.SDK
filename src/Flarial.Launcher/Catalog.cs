@@ -24,6 +24,10 @@ public sealed class Catalog : IEnumerable<string>
 
     const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
 
+    static readonly PackageManager PackageManager = new();
+
+
+
     static string Version(string _)
     {
         var substrings = _.Split('.');
@@ -114,9 +118,9 @@ public sealed class Catalog : IEnumerable<string>
     /// <param name="action">Callback for installation progress.</param>
     /// <returns>An installation request.</returns>
     public async Task<Request> InstallAsync(string _, Action<int> action = default) =>
-    Global.PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false
+    PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false
     ? throw ERROR_INSTALL_FAILED
-    : new(Global.PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
+    : new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
 
 
     /// <summary>

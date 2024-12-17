@@ -1,50 +1,37 @@
 namespace Minecraft.UWP;
 
-using System;
 using System.Linq;
 using Windows.System;
 using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.ApplicationModel;
-using System.Collections.Generic;
-using Windows.System.Diagnostics;
 
-sealed class App
+sealed class App(string _)
 {
-    App(AppDiagnosticInfo _) => AppDiagnosticInfo = _;
-
-    readonly AppDiagnosticInfo AppDiagnosticInfo;
-
-    IEnumerable<ProcessDiagnosticInfo> ProcessDiagnosticInfos => AppDiagnosticInfo.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos());
+    const int AO_NOERRORUI = 0x00000002;
 
     static readonly ApplicationActivationManager ApplicationActivationManager = new();
 
     static readonly PackageDebugSettings PackageDebugSettings = new();
 
-    static readonly Win32Exception ERROR_INSTALL_PACKAGE_NOT_FOUND = new(unchecked((int)0x80073CF1));
+    readonly AppInfo AppInfo = AppInfo.GetFromAppUserModelId(_);
 
-    static readonly Win32Exception ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE = new(unchecked((int)0x80073D10));
+    internal Package Package => AppInfo.Package;
 
-    const int AO_NOERRORUI = 0x00000002;
-
-    internal static async Task<App> GetAsync(string packageFamilyName)
+    internal bool Running
     {
-        var _ = (await AppDiagnosticInfo.RequestInfoForPackageAsync(packageFamilyName)).FirstOrDefault() ?? throw ERROR_INSTALL_PACKAGE_NOT_FOUND;
-        return _.AppInfo.Package.Id.Architecture is not ProcessorArchitecture.X64
-        ? throw ERROR_INSTALL_WRONG_PROCESSOR_ARCHITECTURE : new(_);
+        get
+        {
+            var _ = AppDiagnosticInfo.RequestInfoForAppAsync(AppInfo.AppUserModelId);
+            do if (_.Status is AsyncStatus.Error) throw _.ErrorCode; while (_.Status is AsyncStatus.Started);
+            return _.GetResults().SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos())).Any();
+        }
     }
-
-    internal Process Process => ProcessDiagnosticInfos.FirstOrDefault() is { ProcessId: var processId } ? Process.GetProcessById((int)processId) : null;
-
-    internal bool Running => ProcessDiagnosticInfos.Any();
-
-    internal Package Package => AppDiagnosticInfo.AppInfo.Package;
 
     internal Process Launch()
     {
         PackageDebugSettings.EnableDebugging(Package.Id.FullName, default, default);
-        ApplicationActivationManager.ActivateApplication(AppDiagnosticInfo.AppInfo.AppUserModelId, default, AO_NOERRORUI, out var processId);
+        ApplicationActivationManager.ActivateApplication(AppInfo.AppUserModelId, default, AO_NOERRORUI, out var processId);
         return Process.GetProcessById(processId);
     }
 

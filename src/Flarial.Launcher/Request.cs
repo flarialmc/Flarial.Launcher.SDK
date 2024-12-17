@@ -1,10 +1,10 @@
 namespace Flarial.Launcher;
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Windows.Foundation;
+using System.Threading.Tasks;
 using Windows.Management.Deployment;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Represents an installation request for a version.

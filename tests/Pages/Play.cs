@@ -54,14 +54,14 @@ sealed class Play : TabPage
             {
                 button.Text = "Launching..."; progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
 
-                await Client.DownloadAsync(checkBox.Checked, (_) =>
+                await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
                 {
                     if (progressBar.Value != _)
                     {
                         if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
                         progressBar.Value = _;
                     }
-                });
+                }));
 
                 progressBar.Value = 0; progressBar.Style = ProgressBarStyle.Marquee;
                 await Client.LaunchAsync(checkBox.Checked);

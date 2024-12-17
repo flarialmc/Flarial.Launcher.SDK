@@ -5,7 +5,5 @@ static class Global
 {
     internal static readonly HttpClient HttpClient = new();
 
-    internal static readonly PackageManager PackageManager = new();
-
     internal const string PackageFamilyName = "Microsoft.MinecraftUWP_8wekyb3d8bbwe";
 }
