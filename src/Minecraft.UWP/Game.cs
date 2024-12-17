@@ -34,8 +34,7 @@ public static class Game
         using ManualResetEventSlim @event = new(App.Running && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock")));
 
         using FileSystemWatcher watcher = new(path) { NotifyFilter = NotifyFilters.FileName, IncludeSubdirectories = true, EnableRaisingEvents = true };
-        watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase))
-         @event.Set(); };
+        watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
 
         using var process = App.Launch();
         process.EnableRaisingEvents = true;
