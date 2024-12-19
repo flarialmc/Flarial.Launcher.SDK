@@ -51,7 +51,6 @@ public static class Game
     /// <summary>
     /// Asynchronously launches Minecraft &#38; waits for it to fully initialize.
     /// </summary>
-    /// <returns>The PID of the game.</returns>
     public static async Task LaunchAsync() => await Task.Run(Launch);
 
     /// <summary>
