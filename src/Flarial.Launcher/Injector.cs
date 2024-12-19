@@ -64,6 +64,6 @@ public static class Injector
     /// <summary>
     /// Asynchronously inject a dynamic link library into Minecraft.
     /// </summary>
-    /// <param name="_">Path to the dynamic link library.</param>
-    public static async Task InjectAsync(string _) => await Task.Run(() => Inject(Game.Launch(), _));
+    /// <param name="path">Path to the dynamic link library.</param>
+    public static async Task InjectAsync(string path) => await Task.Run(() => Inject(Game.Launch(), path));
 }

@@ -4,9 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Minecraft.UWP;
-using Windows.System;
 using System.Net.Http;
-using Windows.Foundation;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
@@ -30,11 +28,11 @@ public static class Client
 
     const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
 
-    static async Task<bool> Verify(string path, bool _ = false)
+    static async Task<bool> Verify(string path, bool value = false)
     {
         if (!File.Exists(path)) return false;
         using var stream = File.OpenRead(path);
-        var hash = Node.Get(await Global.HttpClient.GetStreamAsync(Hashes))[_ ? "Beta" : "Release"].Value;
+        var hash = Json.Parse(await Global.HttpClient.GetStreamAsync(Hashes))[value ? "Beta" : "Release"].Value;
         lock (Object) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -57,25 +55,25 @@ public static class Client
     static bool Loaded(string path)
     {
         path = Path.GetFullPath(path);
-        return AppDiagnosticInfo.RequestInfoForPackageAsync(Global.PackageFamilyName).Get()
-        .SelectMany(_ => _.GetResourceGroups().SelectMany(_ => _.GetProcessDiagnosticInfos()))
-        .Any(_ =>
+        return Game.Processes.Any(process =>
         {
-            using var process = Process.GetProcessById((int)_.ProcessId);
-            foreach (ProcessModule module in process.Modules) using (module) if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase)) return true;
-            return false;
+            using (process)
+            {
+                foreach (ProcessModule module in process.Modules) using (module) if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase)) return true;
+                return false;
+            }
         });
     }
 
     /// <summary>
     /// Asynchronously download Flarial Client's dynamic link library.
     /// </summary>
-    /// <param name="_">Specify <c>true</c> to download Flarial Client's Beta.</param>
+    /// <param name="value">Specify <c>true</c> to download Flarial Client's Beta.</param>
     /// <param name="action">Callback for download progress.</param>
-    public static async Task DownloadAsync(bool _ = false, Action<int> action = default) => await Task.Run(async () =>
+    public static async Task DownloadAsync(bool value = false, Action<int> action = default) => await Task.Run(async () =>
     {
-        var (requestUri, path) = _ ? Beta : Release;
-        if (!await Verify(path, _))
+        var (requestUri, path) = value ? Beta : Release;
+        if (!await Verify(path, value))
         {
             if (Loaded(path)) Game.Terminate();
             await Global.HttpClient.GetAsync(requestUri, path, action);
@@ -85,10 +83,10 @@ public static class Client
     /// <summary>
     /// Asynchronously launch Minecraft &#38; inject Flarial Client's dynamic link library.
     /// </summary>
-    /// <param name="_">Specify <c>true</c> to use Flarial Client's Beta.</param>
-    public static async Task LaunchAsync(bool _ = false) => await Task.Run(() =>
+    /// <param name="value">Specify <c>true</c> to use Flarial Client's Beta.</param>
+    public static async Task LaunchAsync(bool value = false) => await Task.Run(() =>
     {
-        if (Loaded((_ ? Release : Beta).Path)) Game.Terminate();
-        Injector.Inject(Game.Launch(), (_ ? Beta : Release).Path);
+        if (Loaded((value ? Release : Beta).Path)) Game.Terminate();
+        Injector.Inject(Game.Launch(), (value ? Beta : Release).Path);
     });
 }

@@ -26,11 +26,9 @@ public sealed class Catalog : IEnumerable<string>
 
     static readonly PackageManager PackageManager = new();
 
-
-
-    static string Version(string _)
+    static string Version(string value)
     {
-        var substrings = _.Split('.');
+        var substrings = value.Split('.');
         ushort major = ushort.Parse(substrings[0]), minor, build;
 
         if (major is 0)
@@ -56,7 +54,7 @@ public sealed class Catalog : IEnumerable<string>
         Dictionary<string, string> dictionary = [];
         var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
-        foreach (var _ in await Node.GetAsync(await Global.HttpClient.GetStreamAsync(Releases)))
+        foreach (var _ in await Json.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases)))
         {
             var substrings = _.Value.Split(' ');
 
@@ -92,9 +90,9 @@ public sealed class Catalog : IEnumerable<string>
         return Content;
     }
 
-    static async Task<Uri> UriAsync(string _)
+    static async Task<Uri> UriAsync(string value)
     {
-        using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), _, '1'), Encoding.UTF8, "application/soap+xml");
+        using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), value, '1'), Encoding.UTF8, "application/soap+xml");
         using var message = await Global.HttpClient.PostAsync(Store, content); message.EnsureSuccessStatusCode();
         return new(await Task.Run(async () =>
         {
@@ -109,24 +107,24 @@ public sealed class Catalog : IEnumerable<string>
         ForceUpdateFromAnyVersion = true
     };
 
-    static readonly Win32Exception ERROR_INSTALL_FAILED = new(unchecked((int)0x80073CF9));
+    const int ERROR_INSTALL_FAILED = unchecked((int)0x80073CF9);
 
     /// <summary>
     /// Asynchronously starts the installation of a version.
     /// </summary>
-    /// <param name="_">The version to be installed.</param>
+    /// <param name="value">The version to be installed.</param>
     /// <param name="action">Callback for installation progress.</param>
     /// <returns>An installation request.</returns>
-    public async Task<Request> InstallAsync(string _, Action<int> action = default) =>
-    PackageManager.FindPackagesForUser(string.Empty, Global.PackageFamilyName).FirstOrDefault()?.IsDevelopmentMode ?? false
-    ? throw ERROR_INSTALL_FAILED
-    : new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[_]), Options), action);
+    public async Task<Request> InstallAsync(string value, Action<int> action = default) =>
+    PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault()?.IsDevelopmentMode ?? false
+    ? throw new Win32Exception(ERROR_INSTALL_FAILED)
+    : new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[value]), Options), action);
 
 
     /// <summary>
     /// Determines whether the specified version exists.
     /// </summary>
-    /// <param name="_">The version to check for.</param>
+    /// <param name="value">The version to check for.</param>
     /// <returns>If the specified version exists then <c>true</c> else <c>false</c>.</returns>
-    public bool Contains(string _) => Dictionary.ContainsKey(_);
+    public bool Contains(string value) => Dictionary.ContainsKey(value);
 }

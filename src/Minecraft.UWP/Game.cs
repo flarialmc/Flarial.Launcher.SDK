@@ -8,13 +8,14 @@ using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Management.Core;
+using System.Collections.Generic;
 
 /// <summary>
 /// Provides methods to interact with Minecraft.
 /// </summary>
 public static class Game
 {
-    static readonly App App = new(Global.AppUserModelId);
+    static readonly App App = new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App");
 
     /// <summary>
     /// Asynchronously obtain Minecraft's installed version.
@@ -31,7 +32,7 @@ public static class Game
     internal static int Launch()
     {
         var path = ApplicationDataManager.CreateForPackageFamily(App.Package.Id.FamilyName).LocalFolder.Path;
-        using ManualResetEventSlim @event = new(App.Running && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock")));
+        using ManualResetEventSlim @event = new(App.Processes.Any() && !File.Exists(Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock")));
 
         using FileSystemWatcher watcher = new(path) { NotifyFilter = NotifyFilters.FileName, IncludeSubdirectories = true, EnableRaisingEvents = true };
         watcher.Deleted += (_, e) => { if (e.Name.Equals(@"games\com.mojang\minecraftpe\resource_init_lock", StringComparison.OrdinalIgnoreCase)) @event.Set(); };
@@ -44,6 +45,8 @@ public static class Game
     }
 
     internal static void Terminate() => App.Terminate();
+
+    internal static IEnumerable<Process> Processes => App.Processes.Select(_ => Process.GetProcessById(_));
 
     /// <summary>
     /// Asynchronously launches Minecraft &#38; waits for it to fully initialize.
