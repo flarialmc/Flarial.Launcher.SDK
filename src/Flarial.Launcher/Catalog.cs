@@ -54,9 +54,9 @@ public sealed class Catalog : IEnumerable<string>
         Dictionary<string, string> dictionary = [];
         var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
-        foreach (var _ in await Json.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases)))
+        foreach (var item in await Json.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases)))
         {
-            var substrings = _.Value.Split(' ');
+            var substrings = item.Value.Split(' ');
 
             var identity = substrings[1].Split('_'); if (identity[2] is not "x64") continue;
 
