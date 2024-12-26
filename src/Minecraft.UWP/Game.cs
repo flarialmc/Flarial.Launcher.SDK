@@ -25,8 +25,8 @@ public static class Game
     {
         var path = App.Package.InstalledPath;
         using var stream = File.OpenRead(Path.Combine(path, "AppxManifest.xml"));
-        var _ = FileVersionInfo.GetVersionInfo(Path.Combine(path, XElement.Load(stream).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value)).FileVersion;
-        return _.Substring(0, _.LastIndexOf('.'));
+        var value = FileVersionInfo.GetVersionInfo(Path.Combine(path, XElement.Load(stream).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value)).FileVersion;
+        return value.Substring(0, value.LastIndexOf('.'));
     });
 
     internal static int Launch()
