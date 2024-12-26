@@ -78,7 +78,7 @@ public sealed class Catalog : IEnumerable<string>
 
     static string Content;
 
-    Catalog(Dictionary<string, string> _) => Dictionary = _;
+    Catalog(Dictionary<string, string> value) => Dictionary = value;
 
     static async Task<string> GetExtendedUpdateInfo2()
     {
