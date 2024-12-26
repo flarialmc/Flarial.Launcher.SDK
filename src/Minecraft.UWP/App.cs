@@ -8,7 +8,7 @@ using Windows.Foundation;
 using Windows.ApplicationModel;
 using System.Collections.Generic;
 
-sealed class App(string _)
+sealed class App(string value)
 {
     const int AO_NOERRORUI = 0x00000002;
 
@@ -16,7 +16,7 @@ sealed class App(string _)
 
     static readonly PackageDebugSettings PackageDebugSettings = new();
 
-    readonly AppInfo AppInfo = AppInfo.GetFromAppUserModelId(_);
+    readonly AppInfo AppInfo = AppInfo.GetFromAppUserModelId(value);
 
     internal Package Package => AppInfo.Package;
 
