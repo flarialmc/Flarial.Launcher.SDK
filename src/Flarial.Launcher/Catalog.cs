@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.Management.Deployment;
+using System.Text.Json.Nodes;
 
 /// <summary>
 /// Provides methods to manage Minecraft versions compatible with Flarial Client.
@@ -54,9 +55,9 @@ public sealed class Catalog : IEnumerable<string>
         Dictionary<string, string> dictionary = [];
         var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
-        foreach (var item in await Json.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases)))
+        foreach (var item in (await JsonNode.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases))).AsArray().Select(_ => _.GetValue<string>()))
         {
-            var substrings = item.Value.Split(' ');
+            var substrings = item.Split(' ');
 
             var identity = substrings[1].Split('_'); if (identity[2] is not "x64") continue;
 

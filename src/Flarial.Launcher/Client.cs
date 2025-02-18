@@ -1,13 +1,15 @@
-namespace Flarial.Launcher;
-
 using System;
 using System.IO;
 using System.Linq;
-using Minecraft.UWP;
 using System.Net.Http;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using System.Threading;
+using Minecraft.UWP;
+using System.Text.Json.Nodes;
+
+namespace Flarial.Launcher;
 
 /// <summary>
 /// Provides method to interact with Flarial Client's dynamic link library.
@@ -20,7 +22,7 @@ public static class Client
 
     static readonly HashAlgorithm Algorithm = SHA256.Create();
 
-    static readonly object Object = new();
+    static readonly Lock Lock = new();
 
     static readonly (string RequestUri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.Release.dll");
 
@@ -32,8 +34,8 @@ public static class Client
     {
         if (!File.Exists(path)) return false;
         using var stream = File.OpenRead(path);
-        var hash = Json.Parse(await Global.HttpClient.GetStreamAsync(Hashes))[value ? "Beta" : "Release"].Value;
-        lock (Object) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
+        var hash = (await JsonNode.ParseAsync(await Global.HttpClient.GetStreamAsync(Hashes)))[value ? "Beta" : "Release"].GetValue<string>();
+        lock (Lock) return hash.Equals(Convert.ToHexString(Algorithm.ComputeHash(stream)), StringComparison.OrdinalIgnoreCase);
     }
 
     static async Task GetAsync(this HttpClient source, string requestUri, string path, Action<int> action = default)
@@ -45,9 +47,9 @@ public static class Client
         using var destination = File.OpenWrite(path);
 
         var count = 0; var value = 0L; var buffer = new byte[Size];
-        while ((count = await stream.ReadAsync(buffer, 0, buffer.Length)) is not 0)
+        while ((count = await stream.ReadAsync(buffer.AsMemory(default, buffer.Length))) != default)
         {
-            await destination.WriteAsync(buffer, 0, count);
+            await destination.WriteAsync(buffer.AsMemory(default, count));
             if (action is not null) action((int)Math.Round(100F * (value += count) / message.Content.Headers.ContentLength.Value));
         }
     }
@@ -75,7 +77,7 @@ public static class Client
         var (requestUri, path) = value ? Beta : Release;
         if (!await Verify(path, value))
         {
-            if (Loaded(path)) Game.Terminate();
+            if (Loaded(path)) Minecraft.Terminate();
             await Global.HttpClient.GetAsync(requestUri, path, action);
         }
     });
@@ -86,7 +88,7 @@ public static class Client
     /// <param name="value">Specify <c>true</c> to use Flarial Client's Beta.</param>
     public static async Task LaunchAsync(bool value = false) => await Task.Run(() =>
     {
-        if (Loaded((value ? Release : Beta).Path)) Game.Terminate();
-        Injector.Inject(Game.Launch(), (value ? Beta : Release).Path);
+        if (Loaded((value ? Release : Beta).Path)) Minecraft.Terminate();
+        Minecraft.Launch((value ? Beta : Release).Path);
     });
 }

@@ -26,9 +26,10 @@ public static class Game
         var path = App.Package.InstalledPath;
         using var stream = File.OpenRead(Path.Combine(path, "AppxManifest.xml"));
         var value = FileVersionInfo.GetVersionInfo(Path.Combine(path, XElement.Load(stream).Descendants().First(_ => _.Name.LocalName is "Application").Attribute("Executable").Value)).FileVersion;
-        return value.Substring(0, value.LastIndexOf('.'));
+        return value[..value.LastIndexOf('.')];
     });
 
+    [Obsolete("Superseded by Bedrockix.", error: true)]
     internal static int Launch()
     {
         var path = ApplicationDataManager.CreateForPackageFamily(App.Package.Id.FamilyName).LocalFolder.Path;
@@ -44,6 +45,7 @@ public static class Game
         @event.Wait(); return process.Id;
     }
 
+    [Obsolete("Superseded by Bedrockix.", error: true)]
     internal static void Terminate() => App.Terminate();
 
     internal static IEnumerable<Process> Processes => App.Processes.Select(_ => Process.GetProcessById(_));
@@ -51,10 +53,12 @@ public static class Game
     /// <summary>
     /// Asynchronously launches Minecraft &#38; waits for it to fully initialize.
     /// </summary>
+    [Obsolete("Superseded by Bedrockix.", error: true)]
     public static async Task LaunchAsync() => await Task.Run(Launch);
 
     /// <summary>
     ///  Asynchronously terminate Minecraft.
     /// </summary>
+    [Obsolete("Superseded by Bedrockix.", error: true)]
     public static async Task TerminateAsync() => await Task.Run(Terminate);
 }
