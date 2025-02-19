@@ -6,13 +6,12 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Threading;
-using Minecraft.UWP;
 using System.Text.Json.Nodes;
 
 namespace Flarial.Launcher;
 
 /// <summary>
-/// Provides method to interact with Flarial Client's dynamic link library.
+/// Provides methods to interact with Flarial Client's dynamic link library.
 /// </summary>
 public static class Client
 {
@@ -30,11 +29,11 @@ public static class Client
 
     const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
 
-    static async Task<bool> Verify(string path, bool value = false)
+    static async Task<bool> VerifyAsync(string path, bool value = false)
     {
         if (!File.Exists(path)) return false;
         using var stream = File.OpenRead(path);
-        var hash = (await JsonNode.ParseAsync(await Global.HttpClient.GetStreamAsync(Hashes)))[value ? "Beta" : "Release"].GetValue<string>();
+        var hash = (await JsonNode.ParseAsync(await Shared.HttpClient.GetStreamAsync(Hashes)))[value ? "Beta" : "Release"].GetValue<string>();
         lock (Lock) return hash.Equals(Convert.ToHexString(Algorithm.ComputeHash(stream)), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -57,11 +56,14 @@ public static class Client
     static bool Loaded(string path)
     {
         path = Path.GetFullPath(path);
-        return Game.Processes.Any(process =>
+        return Minecraft.Processes.Any(process =>
         {
             using (process)
             {
-                foreach (ProcessModule module in process.Modules) using (module) if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase)) return true;
+                foreach (ProcessModule module in process.Modules)
+                    using (module)
+                        if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase))
+                            return true;
                 return false;
             }
         });
@@ -75,10 +77,10 @@ public static class Client
     public static async Task DownloadAsync(bool value = false, Action<int> action = default) => await Task.Run(async () =>
     {
         var (requestUri, path) = value ? Beta : Release;
-        if (!await Verify(path, value))
+        if (!await VerifyAsync(path, value))
         {
             if (Loaded(path)) Minecraft.Terminate();
-            await Global.HttpClient.GetAsync(requestUri, path, action);
+            await Shared.HttpClient.GetAsync(requestUri, path, action);
         }
     });
 

@@ -53,9 +53,9 @@ public sealed class Catalog : IEnumerable<string>
     public static async Task<Catalog> GetAsync()
     {
         Dictionary<string, string> dictionary = [];
-        var set = (await Global.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
+        var set = (await Shared.HttpClient.GetStringAsync(Supported)).Split('\n').ToHashSet();
 
-        foreach (var item in (await JsonNode.ParseAsync(await Global.HttpClient.GetStreamAsync(Releases))).AsArray().Select(_ => _.GetValue<string>()))
+        foreach (var item in (await JsonNode.ParseAsync(await Shared.HttpClient.GetStreamAsync(Releases))).AsArray().Select(_ => _.GetValue<string>()))
         {
             var substrings = item.Split(' ');
 
@@ -94,7 +94,7 @@ public sealed class Catalog : IEnumerable<string>
     static async Task<Uri> UriAsync(string value)
     {
         using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), value, '1'), Encoding.UTF8, "application/soap+xml");
-        using var message = await Global.HttpClient.PostAsync(Store, content); message.EnsureSuccessStatusCode();
+        using var message = await Shared.HttpClient.PostAsync(Store, content); message.EnsureSuccessStatusCode();
         return new(await Task.Run(async () =>
         {
             return XElement.Parse(await message.Content.ReadAsStringAsync()).Descendants().
@@ -111,6 +111,12 @@ public sealed class Catalog : IEnumerable<string>
     const int ERROR_INSTALL_FAILED = unchecked((int)0x80073CF9);
 
     /// <summary>
+    /// Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
+    /// </summary>
+    /// <returns>A boolean value that represents compatibility</returns>
+    public async Task<bool> CompatibleAsync() => await Task.Run(() => Dictionary.ContainsKey(Minecraft.Version));
+
+    /// <summary>
     /// Asynchronously starts the installation of a version.
     /// </summary>
     /// <param name="value">The version to be installed.</param>
@@ -120,12 +126,4 @@ public sealed class Catalog : IEnumerable<string>
     PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault()?.IsDevelopmentMode ?? false
     ? throw new Win32Exception(ERROR_INSTALL_FAILED)
     : new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[value]), Options), action);
-
-
-    /// <summary>
-    /// Determines whether the specified version exists.
-    /// </summary>
-    /// <param name="value">The version to check for.</param>
-    /// <returns>If the specified version exists then <c>true</c> else <c>false</c>.</returns>
-    public bool Contains(string value) => Dictionary.ContainsKey(value);
 }

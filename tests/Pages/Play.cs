@@ -2,7 +2,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Flarial.Launcher;
-using Minecraft.UWP;
 
 sealed class Play : TabPage
 {
@@ -50,7 +49,9 @@ sealed class Play : TabPage
 
         button.Click += async (_, _) =>
         {
-            if (_.Catalog.Contains(await Game.VersionAsync()))
+            if (!Minecraft.Installed) return;
+
+            if (await _.Catalog.CompatibleAsync())
             {
                 button.Text = "Launching..."; progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
 
@@ -66,6 +67,7 @@ sealed class Play : TabPage
                 progressBar.Value = 0; progressBar.Style = ProgressBarStyle.Marquee;
                 await Client.LaunchAsync(checkBox.Checked);
             }
+            else return;
 
             progressBar.Visible = !(button.Enabled = checkBox.Enabled = true);
             button.Text = "Launch";

@@ -61,6 +61,8 @@ sealed class Versions : TabPage
 
         button1.Click += async (_, _) =>
         {
+            if (!Minecraft.Installed) return;
+
             progressBar.Visible = !(button1.Visible = listBox.Enabled = false);
 
             request = await _.Catalog.InstallAsync((string)listBox.SelectedItem, (_) =>
