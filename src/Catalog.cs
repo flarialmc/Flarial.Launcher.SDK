@@ -113,7 +113,7 @@ public sealed class Catalog : IEnumerable<string>
     /// <summary>
     /// Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
     /// </summary>
-    /// <returns>A boolean value that represents compatibility</returns>
+    /// <returns>A boolean value that represents compatibility.</returns>
     public async Task<bool> CompatibleAsync() => await Task.Run(() => Dictionary.ContainsKey(Minecraft.Version));
 
     /// <summary>
