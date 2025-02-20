@@ -16,18 +16,20 @@ sealed class Form : System.Windows.Forms.Form
         MaximizeBox = MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
 
-        TabControl tabControl = new()
+        ProgressBar progressBar = new()
         {
-            Dock = DockStyle.Fill,
-            Visible = false
+            Dock = DockStyle.Bottom,
+            Style = ProgressBarStyle.Marquee,
+            MarqueeAnimationSpeed = 1
         };
-        Controls.Add(tabControl);
+        Controls.Add(progressBar);
 
         Load += async (_, _) =>
         {
             Catalog = await Catalog.GetAsync();
-         
+
             SuspendLayout();
+            progressBar.Visible = false;
             Controls.Add(new Pages(new Play(this), new Versions(this)));
             ResumeLayout();
         };
