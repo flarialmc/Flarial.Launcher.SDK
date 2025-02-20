@@ -8,7 +8,6 @@
     <Optimize>true</Optimize>
     <UseWindowsForms>true</UseWindowsForms>
     <PublishRelease>true</PublishRelease>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher Client</AssemblyTitle>
