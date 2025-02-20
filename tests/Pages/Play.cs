@@ -1,51 +1,59 @@
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Flarial.Launcher;
 
-sealed class Play : TabPage
+sealed class Play : UserControl
 {
     internal Play(Form _)
     {
         Text = "Play";
+        Dock = DockStyle.Fill;
+        AutoSize = true;
+        AutoSizeMode = AutoSizeMode.GrowAndShrink;
+        Margin = default;
+
         TableLayoutPanel panel = new()
         {
             Dock = DockStyle.Fill,
             AutoSize = true,
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            BackColor = Color.White
+            Margin = default
         };
         Controls.Add(panel);
 
         Button button = new()
         {
             Text = "Launch",
-            Width = 150,
-            Height = 50,
-            BackColor = Color.Transparent,
-            Anchor = AnchorStyles.None
+            Dock = DockStyle.Fill,
+            Anchor = AnchorStyles.None,
+            Margin = default
         };
 
         CheckBox checkBox = new()
         {
             Text = "Beta",
             AutoSize = true,
-            Anchor = AnchorStyles.None
+            Anchor = AnchorStyles.None,
+            Margin = default
         };
 
         ProgressBar progressBar = new()
         {
             Dock = DockStyle.Fill,
-            Height = 23,
-            Visible = false,
+            Visible = default,
             Style = ProgressBarStyle.Marquee,
-            MarqueeAnimationSpeed = 1
+            MarqueeAnimationSpeed = 1,
+            Margin = default
         };
 
         panel.RowStyles.Add(new() { SizeType = SizeType.Percent, Height = 100 });
         panel.RowStyles.Add(new() { SizeType = SizeType.AutoSize });
         panel.RowStyles.Add(new() { SizeType = SizeType.AutoSize });
-        panel.Controls.AddRange([button, checkBox, progressBar]);
+        panel.Controls.Add(button, 0, 0);
+        panel.Controls.Add(checkBox, 0, 1);
+        panel.Controls.Add(progressBar, 0, 1);
 
         button.Click += async (_, _) =>
         {
@@ -53,7 +61,10 @@ sealed class Play : TabPage
 
             if (await _.Catalog.CompatibleAsync())
             {
-                button.Text = "Launching..."; progressBar.Visible = !(button.Enabled = checkBox.Enabled = false);
+                SuspendLayout();
+                progressBar.Visible = true;
+                button.Enabled = checkBox.Visible = default;
+                ResumeLayout();
 
                 await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
                 {
@@ -64,13 +75,20 @@ sealed class Play : TabPage
                     }
                 }));
 
-                progressBar.Value = 0; progressBar.Style = ProgressBarStyle.Marquee;
+                SuspendLayout();
+                progressBar.Value = 0;
+                progressBar.Style = ProgressBarStyle.Marquee;
+                ResumeLayout();
+
                 await Client.LaunchAsync(checkBox.Checked);
             }
             else return;
 
-            progressBar.Visible = !(button.Enabled = checkBox.Enabled = true);
+            SuspendLayout();
+            progressBar.Visible = default;
+            button.Enabled = checkBox.Visible = true;
             button.Text = "Launch";
+            ResumeLayout();
         };
     }
 }

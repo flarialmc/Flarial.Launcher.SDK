@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Flarial.Launcher;
 
@@ -10,7 +11,7 @@ sealed class Form : System.Windows.Forms.Form
     {
         Text = "Flarial Launcher";
         Font = SystemFonts.MessageBoxFont;
-        ClientSize = new(800 / 2, 600 / 2);
+        ClientSize = LogicalToDeviceUnits(new Size(400, 300));
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
@@ -22,22 +23,13 @@ sealed class Form : System.Windows.Forms.Form
         };
         Controls.Add(tabControl);
 
-        ProgressBar progressBar = new()
-        {
-            Height = 23,
-            Style = ProgressBarStyle.Marquee,
-            Anchor = AnchorStyles.None,
-            MarqueeAnimationSpeed = 1
-        };
-        progressBar.Left = (ClientSize.Width - progressBar.Width) / 2;
-        progressBar.Top = (ClientSize.Height - progressBar.Height) / 2;
-        Controls.Add(progressBar);
-
         Load += async (_, _) =>
         {
             Catalog = await Catalog.GetAsync();
-            progressBar.Visible = !(tabControl.Visible = true);
-            tabControl.TabPages.AddRange([new Play(this), new Versions(this)]);
+         
+            SuspendLayout();
+            Controls.Add(new Pages(new Play(this), new Versions(this)));
+            ResumeLayout();
         };
     }
 }

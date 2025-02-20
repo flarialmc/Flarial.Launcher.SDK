@@ -11,6 +11,7 @@ static class Program
         Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
 
         Application.EnableVisualStyles();
+        Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new Form());
