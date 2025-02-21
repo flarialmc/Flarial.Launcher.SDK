@@ -49,7 +49,7 @@ public static class Minecraft
     public static IEnumerable<Process> Processes => Metadata.Processes;
 
     /// <summary>
-    /// Asynchronously launches & loads a dynamic link library into Minecraft: Bedrock Edition.
+    /// Asynchronously launches &amp; loads a dynamic link library into Minecraft: Bedrock Edition.
     /// </summary>
     /// <param name="path">The dynamic link library to load.</param>
     public static async Task LaunchAsync(string path) => await Task.Run(() => Launch(path));
