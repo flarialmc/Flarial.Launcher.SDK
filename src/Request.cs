@@ -26,16 +26,12 @@ public sealed class Request
     /// <summary>
     /// Cancels the installation request.
     /// </summary>
-    public void Cancel()
-    {
-        Value.Cancel();
-        ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne();
-    }
+    public void Cancel() { Value.Cancel(); ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne(); }
 
     /// <summary>
     ///  Asynchronously cancels the installation request.
     /// </summary>
-    public async Task CancelAsync() => await Task.Run(Cancel);
+    public async Task CancelAsync() { Value.Cancel(); await this; }
 
     ~Request() => Value.Close();
 }
