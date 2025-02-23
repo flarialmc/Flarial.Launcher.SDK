@@ -71,6 +71,9 @@ public sealed class Catalog : IEnumerable<string>
         return new(dictionary);
     }
 
+    /// <summary>
+    /// Enumerates versions present in the catalog.
+    /// </summary>
     public IEnumerator<string> GetEnumerator() => Dictionary.Keys.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

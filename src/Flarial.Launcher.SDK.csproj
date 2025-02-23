@@ -7,6 +7,7 @@
     <NoWarn>IDE0130</NoWarn>
     <Optimize>true</Optimize>
     <PublishRelease>true</PublishRelease>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>

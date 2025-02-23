@@ -5,6 +5,9 @@ using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher;
 
+/// <summary>
+/// Provides methods to interact with Minecraft: Bedrock Edition.
+/// </summary>
 public static class Minecraft
 {
     /// <summary>
