@@ -30,7 +30,7 @@ sealed class Form : System.Windows.Forms.Form
 
             SuspendLayout();
             progressBar.Visible = false;
-            Controls.Add(new Pages(new Play(this), new Versions(this)));
+            Controls.Add(new Pages(new Play(this), new Versions(this)) { Enabled = Minecraft.Installed });
             ResumeLayout();
         };
     }

@@ -57,8 +57,6 @@ sealed class Play : UserControl
 
         button.Click += async (_, _) =>
         {
-            if (!Minecraft.Installed) return;
-
             if (await _.Catalog.CompatibleAsync())
             {
                 SuspendLayout();
