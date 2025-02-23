@@ -9,7 +9,7 @@ namespace Flarial.Launcher;
 /// <summary>
 /// Represents an installation request for a version.
 /// </summary>
-public sealed class Request
+public sealed class Request : IDisposable
 {
     readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Value;
 
@@ -17,7 +17,7 @@ public sealed class Request
 
     internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> value, Action<int> action = default)
     {
-        (Value = value).Completed += (_, _) => Object.SetResult();
+        (Value = value).Completed += (_, _) => Object.TrySetResult();
         if (action != default) Value.Progress += (_, @object) => { if (@object.state is DeploymentProgressState.Processing) action((int)@object.percentage); };
     }
 
@@ -26,10 +26,14 @@ public sealed class Request
     /// <summary>
     /// Cancels the installation request.
     /// </summary>
-    public void Cancel() { Value.Cancel(); ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne(); }
+    public void Cancel() { if (!Object.Task.IsCompleted) { Value.Cancel(); ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne(); } }
 
     /// <summary>
     ///  Asynchronously cancels the installation request.
     /// </summary>
-    public async Task CancelAsync() { Value.Cancel(); await this; }
+    public async Task CancelAsync() { if (!Object.Task.IsCompleted) { Value.Cancel(); await this; } }
+
+    public void Dispose() { Value.Close(); Object.Task.Dispose(); GC.SuppressFinalize(this); }
+
+    ~Request() => Dispose();
 }
