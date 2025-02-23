@@ -91,17 +91,17 @@ sealed class Versions : UserControl
             button1.Visible = listBox.Enabled = default;
             ResumeLayout();
 
-            request = await _.Catalog.InstallAsync((string)listBox.SelectedItem, (_) =>
+            request = await _.Catalog.InstallAsync((string)listBox.SelectedItem, (_) => Invoke(() =>
             {
                 if (progressBar.Value != _)
                 {
                     if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
                     progressBar.Value = _;
                 }
-            });
+            }));
 
             tableLayoutPanel.Enabled = true;
-            try { await request; } catch (OperationCanceledException) { }
+            await request;
 
             SuspendLayout();
             tableLayoutPanel.Visible = tableLayoutPanel.Enabled = default;

@@ -11,33 +11,31 @@ namespace Flarial.Launcher;
 /// </summary>
 public sealed class Request
 {
-    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
+    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Value;
 
-    readonly Task Task;
+    readonly TaskCompletionSource Object = new();
 
     internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> value, Action<int> action = default)
     {
-        Operation = value;
-        Task = action is null ? value.AsTask() : value.AsTask(new Progress<DeploymentProgress>(_ =>
-        {
-            if (_.state is DeploymentProgressState.Processing)
-                action((int)_.percentage);
-        }));
+        (Value = value).Completed += (_, _) => Object.SetResult();
+        if (action != default) Value.Progress += (_, @object) => { if (@object.state is DeploymentProgressState.Processing) action((int)@object.percentage); };
     }
 
-    public TaskAwaiter GetAwaiter() => Task.GetAwaiter();
+    public TaskAwaiter GetAwaiter() => Object.Task.GetAwaiter();
 
     /// <summary>
     /// Cancels the installation request.
     /// </summary>
     public void Cancel()
     {
-        Operation.Cancel();
-        ((IAsyncResult)Task).AsyncWaitHandle.WaitOne();
+        Value.Cancel();
+        ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne();
     }
 
     /// <summary>
     ///  Asynchronously cancels the installation request.
     /// </summary>
     public async Task CancelAsync() => await Task.Run(Cancel);
+
+    ~Request() => Value.Close();
 }
