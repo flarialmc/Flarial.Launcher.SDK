@@ -32,6 +32,4 @@ public sealed class Request
     ///  Asynchronously cancels the installation request.
     /// </summary>
     public async Task CancelAsync() { Value.Cancel(); await this; }
-
-    ~Request() => Value.Close();
 }
