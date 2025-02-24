@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Bedrockix.Minecraft;
 
-namespace Flarial.Launcher;
+namespace Flarial.Launcher.SDK;
 
 /// <summary>
 /// Provides methods to interact with Minecraft: Bedrock Edition.

@@ -11,15 +11,15 @@
 
     <PackageId>Flarial.Launcher.SDK</PackageId>
     <Title>Flarial Launcher SDK</Title>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0.1</Version>
     <Description>SDK for Flarial Client's Launcher.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Authors>Aetopia</Authors>
+    <Authors>Flarial</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>

@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Text.Json.Nodes;
 
-namespace Flarial.Launcher;
+namespace Flarial.Launcher.SDK;
 
 /// <summary>
 /// Provides methods to interact with Flarial Client's dynamic link library.

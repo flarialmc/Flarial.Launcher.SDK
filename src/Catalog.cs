@@ -1,5 +1,3 @@
-namespace Flarial.Launcher;
-
 using System;
 using System.IO;
 using System.Text;
@@ -13,6 +11,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.Management.Deployment;
 using System.Text.Json.Nodes;
+
+namespace Flarial.Launcher.SDK;
 
 /// <summary>
 /// Provides methods to manage Minecraft versions compatible with Flarial Client.

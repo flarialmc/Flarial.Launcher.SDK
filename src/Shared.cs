@@ -1,6 +1,6 @@
 using System.Net.Http;
 
-namespace Flarial.Launcher;
+namespace Flarial.Launcher.SDK;
 
 static class Shared
 {

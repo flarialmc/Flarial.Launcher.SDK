@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.Management.Deployment;
 using System.Runtime.CompilerServices;
 
-namespace Flarial.Launcher;
+namespace Flarial.Launcher.SDK;
 
 /// <summary>
 /// Represents an installation request for a version.
