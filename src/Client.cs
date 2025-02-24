@@ -15,7 +15,7 @@ namespace Flarial.Launcher.SDK;
 /// </summary>
 public static class Client
 {
-    static Client() => Directory.CreateDirectory("Flarial.Client.Libraries");
+    static Client() => Directory.CreateDirectory("Flarial.Launcher.SDK");
 
     static readonly int Size = Environment.SystemPageSize;
 
@@ -23,9 +23,9 @@ public static class Client
 
     static readonly Lock Lock = new();
 
-    static readonly (string RequestUri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Client\Flarial.Client.Release.dll");
+    static readonly (string RequestUri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Flarial.Launcher.SDK\Flarial.Client.Release.dll");
 
-    static readonly (string RequestUri, string Path) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Client\Flarial.Client.Beta.dll");
+    static readonly (string RequestUri, string Path) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll");
 
     const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
 
