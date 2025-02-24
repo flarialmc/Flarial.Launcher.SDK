@@ -9,12 +9,22 @@
     <PublishRelease>true</PublishRelease>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+    <PackageId>Flarial.Launcher.SDK</PackageId>
+    <Title>Flarial Launcher SDK</Title>
+    <Version>1.0.0.0</Version>
+    <Description>SDK for Flarial Client's Launcher.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Aetopia</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
+    <Company>Flarial</Company>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
   </PropertyGroup>
 
@@ -22,6 +32,8 @@
     <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml">
       <LogicalName>GetExtendedUpdateInfo2.xml</LogicalName>
     </EmbeddedResource>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
