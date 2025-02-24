@@ -15,7 +15,7 @@ namespace Flarial.Launcher.SDK;
 /// </summary>
 public static class Client
 {
-    static Client() => Directory.CreateDirectory("Client");
+    static Client() => Directory.CreateDirectory("Flarial.Client.Libraries");
 
     static readonly int Size = Environment.SystemPageSize;
 
