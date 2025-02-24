@@ -1,5 +1,8 @@
 # Documentation
 
+> [!CAUTION]
+> Before calling any APIs, consider checking if the game is installed or not using [`Minecraft.Installed`](Flarial.Launcher.SDK.Minecraft.md#minecraftinstalled).<br>
+
 - [`Flarial.Launcher.SDK.Catalog`](Flarial.Launcher.SDK.Catalog.md)
 
     Provides methods to manage Minecraft versions compatible with Flarial Client.
