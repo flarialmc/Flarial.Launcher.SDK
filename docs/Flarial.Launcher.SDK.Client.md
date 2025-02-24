@@ -16,6 +16,10 @@ Asynchronously download Flarial Client's dynamic link library.
 
     - `Action<int>`: Callback for download progress.
 
+> [!NOTE]
+> When binding a callback, consider invoking via a thread's dispatcher.<br>
+> This will ensure it executes on the correct synchorization context.
+
 ## `Client.LaunchAsync(bool)`
 
 Asynchronously launch Minecraft & load Flarial Client's dynamic link library.

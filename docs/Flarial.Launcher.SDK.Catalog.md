@@ -38,3 +38,6 @@ Asynchronously starts the installation of a version.
 
 - Returns: An installation request.
 
+> [!NOTE]
+> When binding a callback, consider invoking via a thread's dispatcher.<br>
+> This will ensure it executes on the correct synchorization context.

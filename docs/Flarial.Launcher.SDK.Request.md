@@ -10,7 +10,6 @@ Represents an installation request for a version.
 
 - [`Request.Dispose()`](#requestdispose)
 
-
 ## `Request.GetAwaiter()`
 Gets an awaiter for the installation request.
 
