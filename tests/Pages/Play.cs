@@ -1,8 +1,5 @@
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Flarial.Launcher;
+using Flarial.Launcher.SDK;
 
 sealed class Play : UserControl
 {

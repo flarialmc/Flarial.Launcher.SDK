@@ -11,35 +11,39 @@ namespace Flarial.Launcher.SDK;
 /// </summary>
 public sealed class Request : IDisposable
 {
-    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Value;
+    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
 
-    readonly TaskCompletionSource Object = new();
+    readonly TaskCompletionSource Source = new();
 
-    internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> value, Action<int> action = default)
+    internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> operation, Action<int> action = default)
     {
-        (Value = value).Completed += (_, _) => Object.TrySetResult();
-        if (action != default) Value.Progress += (_, @object) => { if (@object.state is DeploymentProgressState.Processing) action((int)@object.percentage); };
+        (Operation = operation).Completed += (sender, _) =>
+        {
+            if (sender.Status is AsyncStatus.Error) Source.TrySetException(sender.ErrorCode);
+            else Source.TrySetResult();
+        };
+        if (action != default) Operation.Progress += (_, value) => { if (value.state is DeploymentProgressState.Processing) action((int)value.percentage); };
     }
 
     /// <summary>
     /// Asynchronously wait for the installation request to complete.
     /// </summary>
-    public TaskAwaiter GetAwaiter() => Object.Task.GetAwaiter();
+    public TaskAwaiter GetAwaiter() => Source.Task.GetAwaiter();
 
     /// <summary>
     /// Cancels the installation request.
     /// </summary>
-    public void Cancel() { if (!Object.Task.IsCompleted) { Value.Cancel(); ((IAsyncResult)Object.Task).AsyncWaitHandle.WaitOne(); } }
+    public void Cancel() { if (!Source.Task.IsCompleted) { Operation.Cancel(); ((IAsyncResult)Source.Task).AsyncWaitHandle.WaitOne(); } }
 
     /// <summary>
     ///  Asynchronously cancels the installation request.
     /// </summary>
-    public async Task CancelAsync() { if (!Object.Task.IsCompleted) { Value.Cancel(); await this; } }
+    public async Task CancelAsync() { if (!Source.Task.IsCompleted) { Operation.Cancel(); await this; } }
 
     /// <summary>
     /// Cleanup resources held by the installation request.
     /// </summary>
-    public void Dispose() { Value.Close(); Object.Task.Dispose(); GC.SuppressFinalize(this); }
+    public void Dispose() { Operation.Close(); Source.Task.Dispose(); GC.SuppressFinalize(this); }
 
     /// <summary>
     /// Cleanup resources held by the installation request.

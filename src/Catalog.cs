@@ -125,8 +125,5 @@ public sealed class Catalog : IEnumerable<string>
     /// <param name="value">The version to be installed.</param>
     /// <param name="action">Callback for installation progress.</param>
     /// <returns>An installation request.</returns>
-    public async Task<Request> InstallAsync(string value, Action<int> action = default) =>
-    PackageManager.FindPackagesForUser(string.Empty, "Microsoft.MinecraftUWP_8wekyb3d8bbwe").FirstOrDefault()?.IsDevelopmentMode ?? false
-    ? throw new Win32Exception(ERROR_INSTALL_FAILED)
-    : new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[value]), Options), action);
+    public async Task<Request> InstallAsync(string value, Action<int> action = default) => new(PackageManager.AddPackageByUriAsync(await UriAsync(Dictionary[value]), Options), action);
 }
