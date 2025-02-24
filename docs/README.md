@@ -1,7 +1,10 @@
 # Documentation
 
 > [!CAUTION]
-> Before calling any APIs, consider checking if the game is installed or not using [`Minecraft.Installed`](Flarial.Launcher.SDK.Minecraft.md#minecraftinstalled).<br>
+> - Before calling any APIs, consider checking if the game is installed or not using [`Minecraft.Installed`](Flarial.Launcher.SDK.Minecraft.md#minecraftinstalled).
+> - Files used by the SDK are stored in the current working directory.
+>
+>   - Consider setting the working directory before calling any APIs.
 
 - [`Flarial.Launcher.SDK.Catalog`](Flarial.Launcher.SDK.Catalog.md)
 
