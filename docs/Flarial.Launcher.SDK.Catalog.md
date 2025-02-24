@@ -1,7 +1,7 @@
 # `Flarial.Launcher.SDK.Catalog`
 
 > [!TIP]
-> Consider accquiring an instance of `Catalog` & caching it globally.
+> Consider accquiring an instance of `Catalog` at startup & caching it globally.
 
 Provides methods to manage Minecraft versions compatible with Flarial Client.
 
