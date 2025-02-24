@@ -8,6 +8,10 @@ Provides methods to interact with Flarial Client's dynamic link library.
 
 ## `Client.DownloadAsync(bool, Action<nint>)`
 
+> [!IMPORTANT]
+> When binding a callback, consider invoking via a thread's dispatcher.<br>
+> This will ensure it executes on the correct synchorization context.
+
 Asynchronously download Flarial Client's dynamic link library.
 
 - Parameters:
@@ -15,10 +19,6 @@ Asynchronously download Flarial Client's dynamic link library.
     - `bool`: Specify `true` to download Flarial Client's Beta.
 
     - `Action<int>`: Callback for download progress.
-
-> [!IMPORTANT]
-> When binding a callback, consider invoking via a thread's dispatcher.<br>
-> This will ensure it executes on the correct synchorization context.
 
 ## `Client.LaunchAsync(bool)`
 

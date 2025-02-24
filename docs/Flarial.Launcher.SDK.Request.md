@@ -26,4 +26,8 @@ Asynchronously cancels the installation request.
 > Consider using asynchronous cancellation when an application is running.
 
 ## `Request.Dispose()`
+
+> [!CAUTION]
+> Ensure to dispose the installation request as soon as it is completed.
+
 Cleanup resources held by the installation request.

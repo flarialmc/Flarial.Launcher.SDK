@@ -31,6 +31,10 @@ Enumerates versions present in the catalog.
 
 ## `Catalog.InstallAsync(string, Action<int>)`
 
+> [!IMPORTANT]
+> When binding a callback, consider invoking via a thread's dispatcher.<br>
+> This will ensure it executes on the correct synchorization context.
+
 Asynchronously starts the installation of a version.
 
 - Parameters:
@@ -40,7 +44,3 @@ Asynchronously starts the installation of a version.
     - `Action<int>`: Callback for installation progress.
 
 - Returns: An installation request.
-
-> [!IMPORTANT]
-> When binding a callback, consider invoking via a thread's dispatcher.<br>
-> This will ensure it executes on the correct synchorization context.
