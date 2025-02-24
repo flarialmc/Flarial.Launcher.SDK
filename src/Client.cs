@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Threading;
 using System.Text.Json.Nodes;
+using System.Security.Cryptography;
 
 namespace Flarial.Launcher.SDK;
 
@@ -85,7 +85,7 @@ public static class Client
     });
 
     /// <summary>
-    /// Asynchronously launch Minecraft &#38; inject Flarial Client's dynamic link library.
+    /// Asynchronously launch Minecraft &#38; load Flarial Client's dynamic link library.
     /// </summary>
     /// <param name="value">Specify <c>true</c> to use Flarial Client's Beta.</param>
     public static async Task LaunchAsync(bool value = false) => await Task.Run(() =>

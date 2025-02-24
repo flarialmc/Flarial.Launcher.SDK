@@ -26,7 +26,7 @@ public sealed class Request : IDisposable
     }
 
     /// <summary>
-    /// Asynchronously wait for the installation request to complete.
+    ///  Gets an awaiter for the installation request.
     /// </summary>
     public TaskAwaiter GetAwaiter() => Source.Task.GetAwaiter();
 

@@ -47,9 +47,9 @@ public sealed class Catalog : IEnumerable<string>
     }
 
     /// <summary>
-    /// Asynchronously gets a list of versions.
+    /// Asynchronously gets a catalog of versions.
     /// </summary>
-    /// <returns>A list of versions supported by Flarial Client.</returns>
+    /// <returns>A catalog of versions supported by Flarial Client.</returns>
     public static async Task<Catalog> GetAsync()
     {
         Dictionary<string, string> dictionary = [];
