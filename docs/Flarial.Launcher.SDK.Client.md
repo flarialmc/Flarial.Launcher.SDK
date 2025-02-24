@@ -16,7 +16,7 @@ Asynchronously download Flarial Client's dynamic link library.
 
     - `Action<int>`: Callback for download progress.
 
-> [!NOTE]
+> [!IMPORTANT]
 > When binding a callback, consider invoking via a thread's dispatcher.<br>
 > This will ensure it executes on the correct synchorization context.
 
