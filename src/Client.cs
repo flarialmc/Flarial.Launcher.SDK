@@ -15,8 +15,6 @@ namespace Flarial.Launcher.SDK;
 /// </summary>
 public static class Client
 {
-    static Client() => Directory.CreateDirectory("Flarial.Launcher.SDK");
-
     static readonly int Size = Environment.SystemPageSize;
 
     static readonly HashAlgorithm Algorithm = SHA256.Create();
@@ -80,6 +78,7 @@ public static class Client
         if (!await VerifyAsync(path, value))
         {
             if (Loaded(path)) Minecraft.Terminate();
+            Directory.CreateDirectory("Flarial.Launcher.SDK");
             await Shared.HttpClient.GetAsync(requestUri, path, action);
         }
     });
