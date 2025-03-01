@@ -9,6 +9,7 @@ namespace Flarial.Launcher.SDK;
 /// <summary>
 /// Represents an installation request for a version.
 /// </summary>
+
 public sealed class Request : IDisposable
 {
     readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
@@ -28,25 +29,30 @@ public sealed class Request : IDisposable
     /// <summary>
     ///  Gets an awaiter for the installation request.
     /// </summary>
+  
     public TaskAwaiter GetAwaiter() => Source.Task.GetAwaiter();
 
     /// <summary>
     /// Cancels the installation request.
     /// </summary>
+  
     public void Cancel() { if (!Source.Task.IsCompleted) { Operation.Cancel(); ((IAsyncResult)Source.Task).AsyncWaitHandle.WaitOne(); } }
 
     /// <summary>
     ///  Asynchronously cancels the installation request.
     /// </summary>
+   
     public async Task CancelAsync() { if (!Source.Task.IsCompleted) { Operation.Cancel(); await this; } }
 
     /// <summary>
     /// Cleanup resources held by the installation request.
     /// </summary>
+  
     public void Dispose() { Operation.Close(); Source.Task.Dispose(); GC.SuppressFinalize(this); }
 
     /// <summary>
     /// Cleanup resources held by the installation request.
     /// </summary>
+   
     ~Request() => Dispose();
 }
