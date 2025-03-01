@@ -27,3 +27,5 @@ Asynchronously launch Minecraft & load Flarial Client's dynamic link library.
 - Parameters:
 
     - `bool`: Specify `true` to use Flarial Client's Beta.
+
+- Returns: If the game initialized & launched successfully or not.

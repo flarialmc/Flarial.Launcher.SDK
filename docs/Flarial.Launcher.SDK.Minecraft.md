@@ -44,17 +44,23 @@ Get any running processes of Minecraft: Bedrock Edition.
 
 Launches Minecraft: Bedrock Edition.
 
+- Returns: If the game initialized & launched successfully or not.
+
 ## `Minecraft.Launch(string)`
 
 Launches & loads a dynamic link library into Minecraft: Bedrock Edition.
 
 - Parameter: The dynamic link library to load.
 
+- Returns: If the game initialized & launched successfully or not.
+
 ## `Minecraft.LaunchAsync(string)`
 
 Asynchronously launches & loads a dynamic link library into Minecraft: Bedrock Edition.
 
 - Parameter: The dynamic link library to load.
+
+- Returns: If the game initialized & launched successfully or not.
 
 ## `Minecraft.Terminate()`
 

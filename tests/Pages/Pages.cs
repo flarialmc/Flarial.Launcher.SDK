@@ -35,7 +35,6 @@ sealed class Pages : TableLayoutPanel
             {
                 Text = control.Text,
                 Dock = DockStyle.Fill,
-                DataContext = control,
                 Margin = default
             };
 
@@ -45,8 +44,9 @@ sealed class Pages : TableLayoutPanel
                 for (int index = default; index < value.Length; index++)
                 {
                     var button = buttons[index];
+                    var control = value[index];
                     button.Enabled = sender != button;
-                    ((UserControl)button.DataContext).Visible = sender == button;
+                    control.Visible = sender == button;
                 }
                 ResumeLayout();
             };
@@ -58,6 +58,6 @@ sealed class Pages : TableLayoutPanel
         }
 
         var item = buttons[default];
-        ((UserControl)item.DataContext).Visible = !(item.Enabled = default);
+        value[default].Visible = !(item.Enabled = default);
     }
 }
