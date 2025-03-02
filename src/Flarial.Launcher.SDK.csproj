@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0-windows10.0.19041.0;net481</TargetFrameworks>
     <LangVersion>latest</LangVersion>
-    <NoWarn>IDE0130,IDE0330,CA1872,CA1835</NoWarn>
+    <NoWarn>IDE0130,IDE0330,CA1872,CA1835,IDE0057</NoWarn>
     <Optimize>true</Optimize>
     <PublishRelease>true</PublishRelease>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <PackageId>Flarial.Launcher.SDK</PackageId>
     <Title>Flarial Launcher SDK</Title>
-    <Version>1.1.0.0</Version>
+    <Version>1.2.0.0</Version>
     <Description>SDK for Flarial Client's Launcher.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Flarial</Authors>
@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
@@ -28,26 +28,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml">
-      <LogicalName>GetExtendedUpdateInfo2.xml</LogicalName>
-    </EmbeddedResource>
-    <None Include="..\LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\README.md" Pack="true" PackagePath="" />
-  </ItemGroup>
+    <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml" LogicalName="GetExtendedUpdateInfo2.xml" />
 
-  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" />
+
+    <None Include="..\README.md" Pack="true" PackagePath="" />
+
     <PackageReference Include="Bedrockix" Version="*" />
 
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.2"
-      Condition="'$(TargetFramework)' == 'net481'" />
-
-    <Reference Include="System.Net.Http" Condition="'$(TargetFramework)' == 'net481'" />
-
-    <Reference Include="System.Web.Extensions" Condition="'$(TargetFramework)' == 'net481'" />
-
-    <Compile Remove="**/*Core.cs" Condition="'$(TargetFramework)' == 'net481'" />
-
     <Compile Remove="**/*Framework.cs" Condition="'$(TargetFramework)' != 'net481'" />
+  </ItemGroup>
+
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <Reference Include="System.IO.Compression" />
+
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.2" />
+
+    <Reference Include="System.Net.Http" />
+
+    <Reference Include="System.Web.Extensions" />
+
+    <Reference Include="Microsoft.CSharp" />
+
+    <Compile Remove="**/*Core.cs" />
   </ItemGroup>
 
 </Project>

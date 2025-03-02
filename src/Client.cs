@@ -28,7 +28,7 @@ public static partial class Client
     {
         if (!File.Exists(path)) return false;
         using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var hash = await Web.HashAsync(value);
+        var hash = await Internet.HashAsync(value);
         lock (Lock) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
     });
 
@@ -78,12 +78,12 @@ public static partial class Client
 
     public static async Task DownloadAsync(bool value = false, Action<int> action = default) => await Task.Run(async () =>
     {
-        var (requestUri, path) = value ? Beta : Release;
-        if (!await VerifyAsync(path, value))
+        var (Uri, Path) = value ? Beta : Release;
+        if (!await VerifyAsync(Path, value))
         {
-            if (Loaded(path)) Minecraft.Terminate();
+            if (Loaded(Path)) Minecraft.Terminate();
             Directory.CreateDirectory("Flarial.Launcher.SDK");
-            await Shared.HttpClient.GetAsync(requestUri, path, action);
+            await Internet.DownloadAsync(Uri, Path, action);
         }
     });
 

@@ -6,7 +6,7 @@ using Flarial.Launcher.SDK;
 
 sealed class Versions : UserControl
 {
-    internal Versions(Form _)
+    internal Versions(Form @this)
     {
         Text = "Versions";
         Dock = DockStyle.Fill;
@@ -76,7 +76,7 @@ sealed class Versions : UserControl
         {
             if (!panel.Enabled)
             {
-                await Task.Run(() => { foreach (var item in _.Catalog.Reverse()) listBox.Items.Add(item); });
+                await Task.Run(() => { foreach (var item in @this.Catalog.Reverse()) listBox.Items.Add(item); });
                 listBox.SelectedIndex = default;
                 panel.Enabled = true;
             }
@@ -85,13 +85,13 @@ sealed class Versions : UserControl
         button1.Click += async (_, _) =>
         {
             if (!Minecraft.Installed) return;
-
+            
             SuspendLayout();
             tableLayoutPanel.Visible = true;
             button1.Visible = listBox.Enabled = default;
             ResumeLayout();
 
-            using (request = await _.Catalog.InstallAsync((string)listBox.SelectedItem, (_) => Invoke(() =>
+            using (request = await @this.Catalog.InstallAsync((string)listBox.SelectedItem, (_) => Invoke(() =>
               {
                   if (progressBar.Value != _)
                   {
