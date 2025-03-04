@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -6,16 +7,17 @@ using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Windows.Data.Json;
 
 namespace Flarial.Launcher.SDK;
 
-static partial class Internet
+static partial class Web
 {
     const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
 
-    const string Packages = "https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/releases.json";
+    const string Releases = "https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/releases.json";
 
-    const string Framework = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
+    const string Index = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
 
     static readonly HttpClient HttpClient = new();
 
@@ -41,7 +43,11 @@ static partial class Internet
 
     internal static async Task<Stream> FrameworkAsync()
     {
-        using var reader = JsonReaderWriterFactory.CreateJsonReader(await HttpClient.GetStreamAsync(Framework), XmlDictionaryReaderQuotas.Max);
+        using var reader = JsonReaderWriterFactory.CreateJsonReader(await HttpClient.GetStreamAsync(Index), XmlDictionaryReaderQuotas.Max);
         return await HttpClient.GetStreamAsync(XElement.Load(reader).Descendants("packageContent").Last(_ => _.Value.StartsWith("https://")).Value);
     }
+
+    internal static async Task<IEnumerable<string>> PackagesAsync() => JsonArray.Parse(await HttpClient.GetStringAsync(Releases)).Select(_ => _.GetString());
+
+    internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await HttpClient.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
 }

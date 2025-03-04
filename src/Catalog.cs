@@ -60,12 +60,12 @@ public sealed class Catalog : IEnumerable<string>
     /// A catalog of versions supported by Flarial Client.
     /// </returns>
 
-    public static async Task<Catalog> GetAsync()
+    public static async Task<Catalog> GetAsync() => await Task.Run(async () =>
     {
         Dictionary<string, string> dictionary = [];
-        var set = (await Internet.GetAsync(Supported)).Split('\n').ToHashSet();
+        var set = (await Web.GetAsync(Supported)).Split('\n').ToHashSet();
 
-        foreach (var item in await Internet.PackagesAsync())
+        foreach (var item in await Web.PackagesAsync())
         {
             var substrings = item.Split(' ');
 
@@ -78,8 +78,8 @@ public sealed class Catalog : IEnumerable<string>
             else dictionary[key] = substrings[0];
         }
 
-        return new(dictionary);
-    }
+        return new Catalog(dictionary);
+    });
 
     /// <summary>
     /// Enumerates versions present in the catalog.
@@ -108,7 +108,7 @@ public sealed class Catalog : IEnumerable<string>
     static async Task<Uri> UriAsync(string value)
     {
         using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), value, '1'), Encoding.UTF8, "application/soap+xml");
-        using var message = await Internet.PostAsync(Store, content); message.EnsureSuccessStatusCode();
+        using var message = await Web.PostAsync(Store, content); message.EnsureSuccessStatusCode();
         return new(await Task.Run(async () =>
         {
             return XElement.Parse(await message.Content.ReadAsStringAsync()).Descendants().
@@ -148,8 +148,6 @@ public sealed class Catalog : IEnumerable<string>
     /// An installation request.
     /// </returns>
 
-    //  public async Task<Request> InstallAsync(string value, Action<int> action = default) => ;
-
     public async Task<Request> InstallAsync(string value, Action<int> action = default) => await Task.Run(async () =>
     {
         var _ = Value[value];
@@ -158,7 +156,7 @@ public sealed class Catalog : IEnumerable<string>
         {
             var path = Path.Combine(Path.GetTempPath(), "Microsoft.Services.Store.Engagement.x64.10.0.appx");
 
-            using var stream = await Internet.FrameworkAsync(); using ZipArchive archive = new(stream);
+            using var stream = await Web.FrameworkAsync(); using ZipArchive archive = new(stream);
             archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
 
             var @object = PackageManager.AddPackageAsync(new Uri(path), default, default);

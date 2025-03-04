@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
@@ -14,8 +13,6 @@ namespace Flarial.Launcher.SDK;
 
 public static partial class Client
 {
-    static readonly int Size = Environment.SystemPageSize;
-
     static readonly HashAlgorithm Algorithm = SHA256.Create();
 
     static readonly object Lock = new();
@@ -27,26 +24,9 @@ public static partial class Client
     static async Task<bool> VerifyAsync(string path, bool value = false) => await Task.Run(async () =>
     {
         if (!File.Exists(path)) return false;
-        using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var hash = await Internet.HashAsync(value);
+        using var stream = File.OpenRead(path); var hash = await Web.HashAsync(value);
         lock (Lock) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
     });
-
-    static async Task GetAsync(this HttpClient source, string requestUri, string path, Action<int> action = default)
-    {
-        using var message = await source.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead);
-        message.EnsureSuccessStatusCode();
-
-        using var stream = await message.Content.ReadAsStreamAsync();
-        using var destination = File.OpenWrite(path);
-
-        var count = 0; var value = 0L; var buffer = new byte[Size];
-        while ((count = await stream.ReadAsync(buffer, default, buffer.Length)) != default)
-        {
-            await destination.WriteAsync(buffer, default, count);
-            if (action is not null) action((int)Math.Round(100F * (value += count) / message.Content.Headers.ContentLength.Value));
-        }
-    }
 
     static bool Loaded(string path)
     {
@@ -83,7 +63,7 @@ public static partial class Client
         {
             if (Loaded(Path)) Minecraft.Terminate();
             Directory.CreateDirectory("Flarial.Launcher.SDK");
-            await Internet.DownloadAsync(Uri, Path, action);
+            await Web.DownloadAsync(Uri, Path, action);
         }
     });
 
