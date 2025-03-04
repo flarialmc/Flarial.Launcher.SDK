@@ -17,8 +17,6 @@ static partial class Internet
 
     const string Framework = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
 
-    static readonly int Size = Environment.SystemPageSize;
-
     static readonly HttpClient HttpClient = new();
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
@@ -27,9 +25,9 @@ static partial class Internet
         message.EnsureSuccessStatusCode();
 
         using var stream = await message.Content.ReadAsStreamAsync();
-        using FileStream destination = new(path, FileMode.Create, FileAccess.Write, FileShare.None, default, true);
+        using FileStream destination = new(path, FileMode.Create, FileAccess.Write, FileShare.None, Environment.SystemPageSize, true);
 
-        var count = 0; var value = 0L; var buffer = new byte[Size];
+        var count = 0; var value = 0L; var buffer = new byte[Environment.SystemPageSize];
         while ((count = await stream.ReadAsync(buffer, default, buffer.Length)) != default)
         {
             await destination.WriteAsync(buffer, default, count);
