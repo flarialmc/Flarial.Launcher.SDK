@@ -7,8 +7,7 @@ static class Program
 {
     static void Main()
     {
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Flarial.Launcher");
-        Directory.CreateDirectory(path); Directory.SetCurrentDirectory(path);
+        Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
         Application.EnableVisualStyles();
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
