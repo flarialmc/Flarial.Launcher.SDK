@@ -54,30 +54,28 @@ sealed class Play : UserControl
 
         button.Click += async (_, _) =>
         {
-            if (await _.Catalog.CompatibleAsync())
+            if (!await _.Catalog.CompatibleAsync()) return;
+
+            SuspendLayout();
+            progressBar.Visible = true;
+            button.Enabled = checkBox.Visible = default;
+            ResumeLayout();
+
+            await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
             {
-                SuspendLayout();
-                progressBar.Visible = true;
-                button.Enabled = checkBox.Visible = default;
-                ResumeLayout();
-
-                await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
+                if (progressBar.Value != _)
                 {
-                    if (progressBar.Value != _)
-                    {
-                        if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
-                        progressBar.Value = _;
-                    }
-                }));
+                    if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
+                    progressBar.Value = _;
+                }
+            }));
 
-                SuspendLayout();
-                progressBar.Value = 0;
-                progressBar.Style = ProgressBarStyle.Marquee;
-                ResumeLayout();
+            SuspendLayout();
+            progressBar.Value = 0;
+            progressBar.Style = ProgressBarStyle.Marquee;
+            ResumeLayout();
 
-                await Client.LaunchAsync(checkBox.Checked);
-            }
-            else return;
+            await Client.LaunchAsync(checkBox.Checked);
 
             SuspendLayout();
             progressBar.Visible = default;
