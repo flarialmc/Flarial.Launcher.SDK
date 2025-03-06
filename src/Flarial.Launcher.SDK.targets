@@ -1,0 +1,5 @@
+<Project>
+    <Target Name="PlatformTarget" BeforeTargets="Build">
+        <Error Condition="'$(PlatformTarget)' != 'x64'" Text="The target platform must be x64." />
+    </Target>
+</Project>
