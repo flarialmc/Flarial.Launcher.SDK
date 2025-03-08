@@ -25,10 +25,6 @@ public sealed class Catalog : IEnumerable<string>
 
     const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
 
-    const string Framework = "https://www.nuget.org/api/v2/package/Microsoft.Services.Store.Engagement";
-
-    static readonly string Directory = Path.GetTempPath();
-
     readonly static Version Version = new("1.21.51");
 
     static readonly PackageManager PackageManager = new();
