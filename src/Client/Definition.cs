@@ -7,9 +7,6 @@ using System.Security.Cryptography;
 
 namespace Flarial.Launcher.SDK;
 
-/// <summary>
-/// Provides methods to interact with Flarial Client's dynamic link library.
-/// </summary>
 
 public static partial class Client
 {
@@ -44,19 +41,7 @@ public static partial class Client
         });
     }
 
-    /// <summary>
-    /// Asynchronously download Flarial Client's dynamic link library.
-    /// </summary>
-
-    /// <param name="value">
-    /// Specify <c>true</c> to download Flarial Client's Beta.
-    /// </param>
-
-    /// <param name="action">
-    /// Callback for download progress.
-    /// </param>
-
-    public static async Task DownloadAsync(bool value = false, Action<int> action = default) => await Task.Run(async () =>
+    public static async partial Task DownloadAsync(bool value, Action<int> action) => await Task.Run(async () =>
     {
         var (Uri, Path) = value ? Beta : Release;
         if (!await VerifyAsync(Path, value))
@@ -67,19 +52,7 @@ public static partial class Client
         }
     });
 
-    /// <summary>
-    /// Asynchronously launch Minecraft &#38; load Flarial Client's dynamic link library.
-    /// </summary>
-
-    /// <param name="value">
-    /// Specify <c>true</c> to use Flarial Client's Beta.
-    /// </param>
-
-    /// <returns>
-    /// If the game initialized &amp; launched successfully or not.
-    /// </returns>
-
-    public static async Task<bool> LaunchAsync(bool value = false) => await Task.Run(() =>
+    public static async partial Task<bool> LaunchAsync(bool value) => await Task.Run(() =>
     {
         if (Loaded((value ? Release : Beta).Path)) Minecraft.Terminate();
         return Minecraft.Launch((value ? Beta : Release).Path);

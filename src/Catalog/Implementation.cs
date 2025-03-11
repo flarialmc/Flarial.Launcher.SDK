@@ -15,11 +15,8 @@ using Windows.Foundation;
 
 namespace Flarial.Launcher.SDK;
 
-/// <summary>
-/// Provides methods to manage Minecraft versions compatible with Flarial Client.
-/// </summary>
 
-public sealed class Catalog : IEnumerable<string>
+public sealed partial class Catalog : IEnumerable<string>
 {
     const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/Supported.txt";
 
@@ -48,17 +45,9 @@ public sealed class Catalog : IEnumerable<string>
         return $"{major}.{minor}.{build}";
     }
 
-    /// <summary>
-    /// Asynchronously gets a catalog of versions.
-    /// </summary>
-
-    /// <returns>
-    /// A catalog of versions supported by Flarial Client.
-    /// </returns>
-
-    public static async Task<Catalog> GetAsync() => await Task.Run(async () =>
+    public static async partial Task<Catalog> GetAsync() => await Task.Run(async () =>
     {
-        Dictionary<string, string> dictionary = [];
+        Dictionary<string, string> value = [];
         var set = (await Web.GetAsync(Supported)).Split('\n').ToHashSet();
 
         foreach (var item in await Web.PackagesAsync())
@@ -70,11 +59,11 @@ public sealed class Catalog : IEnumerable<string>
             var key = _(identity[1]);
             if (!set.Contains(key)) continue;
 
-            if (!dictionary.ContainsKey(key)) dictionary.Add(key, substrings[0]);
-            else dictionary[key] = substrings[0];
+            if (!value.ContainsKey(key)) value.Add(key, substrings[0]);
+            else value[key] = substrings[0];
         }
 
-        return new Catalog(dictionary);
+        return new Catalog(value);
     });
 
     /// <summary>
@@ -118,33 +107,9 @@ public sealed class Catalog : IEnumerable<string>
         ForceUpdateFromAnyVersion = true
     };
 
-    /// <summary>
-    /// Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
-    /// </summary>
+    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Value.ContainsKey(Minecraft.Version));
 
-    /// <returns>
-    /// A boolean value that represents compatibility.
-    /// </returns>
-
-    public async Task<bool> CompatibleAsync() => await Task.Run(() => Value.ContainsKey(Minecraft.Version));
-
-    /// <summary>
-    /// Asynchronously starts the installation of a version.
-    /// </summary>
-
-    /// <param name="value">
-    /// The version to be installed.
-    /// </param>
-
-    /// <param name="action">
-    /// Callback for installation progress.
-    /// </param>
-
-    /// <returns>
-    /// An installation request.
-    /// </returns>
-
-    public async Task<Request> InstallAsync(string value, Action<int> action = default) => await Task.Run(async () =>
+    public async partial Task<Request> InstallAsync(string value, Action<int> action) => await Task.Run(async () =>
     {
         var _ = Value[value];
 
