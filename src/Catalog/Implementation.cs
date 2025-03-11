@@ -12,6 +12,7 @@ using Windows.Management.Deployment;
 using System.IO.Compression;
 using System.Threading;
 using Windows.Foundation;
+using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher.SDK;
 
@@ -107,7 +108,7 @@ public sealed partial class Catalog : IEnumerable<string>
         ForceUpdateFromAnyVersion = true
     };
 
-    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Value.ContainsKey(Minecraft.Version));
+    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Value.ContainsKey(Metadata.Version));
 
     public async partial Task<Request> InstallAsync(string value, Action<int> action) => await Task.Run(async () =>
     {

@@ -1,5 +1,8 @@
 using System.Drawing;
+using System.Net;
+using System.Security.Cryptography;
 using System.Windows.Forms;
+using Bedrockix.Minecraft;
 using Flarial.Launcher.SDK;
 
 sealed class Form : System.Windows.Forms.Form
@@ -29,7 +32,7 @@ sealed class Form : System.Windows.Forms.Form
 
             SuspendLayout();
             progressBar.Visible = false;
-            Controls.Add(new Pages(new Play(this), new Versions(this)) { Enabled = Minecraft.Installed });
+            Controls.Add(new Pages(new Play(this), new Versions(this)) { Enabled = Game.Installed });
             ResumeLayout();
         };
     }
