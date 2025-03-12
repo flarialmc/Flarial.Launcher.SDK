@@ -21,3 +21,7 @@
 - [`Flarial.Launcher.SDK.Request`](Flarial.Launcher.SDK.Request.md)
 
     Represents an installation request for a version.
+
+- [`Flarial.Launcher.SDK.Developer`](Flarial.Launcher.SDK.Developer.md)
+
+    Provides methods to manage Developer Mode on Windows.

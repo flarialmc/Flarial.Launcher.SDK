@@ -7,17 +7,18 @@
     <PublishRelease>true</PublishRelease>
     <PlatformTarget>x64</PlatformTarget>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>IDE0130</NoWarn>
 
     <PackageId>Flarial.Launcher.SDK</PackageId>
     <Title>Flarial Launcher SDK</Title>
-    <Version>1.2.4.2</Version>
+    <Version>1.2.5.0</Version>
     <Description>SDK for Flarial Client's Launcher.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Flarial</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
 
-    <AssemblyVersion>1.2.4.2</AssemblyVersion>
+    <AssemblyVersion>1.2.5.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
