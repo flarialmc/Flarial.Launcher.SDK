@@ -8,7 +8,6 @@ using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher.SDK;
 
-
 public static partial class Client
 {
     static readonly HashAlgorithm Algorithm = SHA256.Create();

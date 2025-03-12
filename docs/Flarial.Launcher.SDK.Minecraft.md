@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This class is deprecated.
+
 # `Flarial.Launcher.SDK.Minecraft`
 
 Provides methods to interact with Minecraft: Bedrock Edition.

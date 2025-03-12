@@ -19,7 +19,7 @@ namespace Flarial.Launcher.SDK;
 
 public sealed partial class Catalog : IEnumerable<string>
 {
-    const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/Supported.txt";
+    const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
 
     const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
 

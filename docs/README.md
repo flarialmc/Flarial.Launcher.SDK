@@ -25,3 +25,8 @@
 - [`Flarial.Launcher.SDK.Developer`](Flarial.Launcher.SDK.Developer.md)
 
     Provides methods to manage Developer Mode on Windows.
+
+
+- [`Flarial.Launcher.SDK.Launcher`](Flarial.Launcher.SDK.Launcher.md)
+
+    Provides methods to manage Flarial Client's launcher.

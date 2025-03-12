@@ -68,5 +68,34 @@ sealed class Settings : UserControl
         tableLayoutPanel.Controls.Add(button2, 1, 1);
 
         button2.Click += (_, _) => Developer.Request();
+
+        Label label3 = new()
+        {
+            Text = "Launcher Updater",
+            Dock = DockStyle.Top,
+            AutoSize = true,
+            TextAlign = ContentAlignment.MiddleCenter,
+            Margin = new(0, 6, 0, 0)
+        };
+
+        tableLayoutPanel.Controls.Add(label3, 0, 2);
+
+        Button button3 = new()
+        {
+            Text = "Update",
+            Dock = DockStyle.Top,
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            Margin = default
+        };
+        tableLayoutPanel.Controls.Add(button3, 1, 2);
+
+        button3.Click += async (_, _) =>
+        {
+            button3.Enabled = false;
+            await Launcher.UpdateAsync((_) => Invoke(() => button3.Text = $"{_}%"));
+            button3.Text = "Update";
+            button3.Enabled = true;
+        };
     }
 }

@@ -19,6 +19,8 @@ static partial class Web
 
     const string Index = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
 
+    const string Launcher = "https://raw.githubusercontent.com/flarialmc/newcdn/refs/heads/main/launcher/launcherVersion.txt";
+
     static readonly HttpClient HttpClient = new();
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
@@ -50,4 +52,7 @@ static partial class Web
     internal static async Task<IEnumerable<string>> PackagesAsync() => JsonArray.Parse(await HttpClient.GetStringAsync(Releases)).Select(_ => _.GetString());
 
     internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await HttpClient.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
+
+    internal static async Task<JsonObject> LauncherAsync() => await Task.Run(async () => JsonObject.Parse(await HttpClient.GetStringAsync(Launcher)))
+;
 }
