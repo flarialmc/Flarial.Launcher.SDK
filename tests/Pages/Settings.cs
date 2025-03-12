@@ -93,7 +93,7 @@ sealed class Settings : UserControl
 
         button3.Click += async (_, _) =>
         {
-            if (!await Launcher.CheckAsync()) return;
+            if (!await Launcher.AvailableAsync()) return;
             button3.Enabled = false;
             await Launcher.UpdateAsync((_) => Invoke(() => button3.Text = $"{_}%"));
             button3.Text = "Update";
