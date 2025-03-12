@@ -20,7 +20,7 @@ public static partial class Launcher
     /// <summary>
     ///  Asynchronously force updates the launcher to the latest version.
     /// </summary>
-    /// <param name="action">Callback for update progress</param>
+    /// <param name="action">Callback for update progress.</param>
 
-    public static partial Task UpdateAsync(Action<int> action);
+    public static partial Task UpdateAsync(Action<int> action = default);
 }
