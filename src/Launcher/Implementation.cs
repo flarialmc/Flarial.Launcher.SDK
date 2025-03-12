@@ -28,7 +28,7 @@ public static partial class Launcher
 
     static readonly string Executable;
 
-    public static partial async Task<bool> CheckAsync() => new Version((await Web.LauncherAsync())["version"].GetString()) == Version;
+    public static partial async Task<bool> AvailableAsync() => new Version((await Web.LauncherAsync())["version"].GetString()) != Version;
 
     public static async partial Task UpdateAsync(Action<int> action)
     {

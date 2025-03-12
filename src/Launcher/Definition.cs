@@ -15,7 +15,7 @@ public static partial class Launcher
     /// Asynchronously check if a launcher update is available. 
     /// </summary>
 
-    public static partial Task<bool> CheckAsync();
+    public static partial Task<bool> AvailableAsync();
 
     /// <summary>
     ///  Asynchronously force updates the launcher to the latest version.

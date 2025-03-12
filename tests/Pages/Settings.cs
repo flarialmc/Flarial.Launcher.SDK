@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Flarial.Launcher.SDK;
@@ -92,6 +93,7 @@ sealed class Settings : UserControl
 
         button3.Click += async (_, _) =>
         {
+            if (!await Launcher.CheckAsync()) return;
             button3.Enabled = false;
             await Launcher.UpdateAsync((_) => Invoke(() => button3.Text = $"{_}%"));
             button3.Text = "Update";
