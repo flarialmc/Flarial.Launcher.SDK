@@ -14,9 +14,6 @@
 
      Provides methods to interact with Flarial Client's dynamic link library.
 
-> [!CAUTION]
-> This class is deprecated.
-
 - [`Flarial.Launcher.SDK.Minecraft`](Flarial.Launcher.SDK.Minecraft.md)
 
     Provides methods to interact with Minecraft: Bedrock Edition.
@@ -28,7 +25,6 @@
 - [`Flarial.Launcher.SDK.Developer`](Flarial.Launcher.SDK.Developer.md)
 
     Provides methods to manage Developer Mode on Windows.
-
 
 - [`Flarial.Launcher.SDK.Launcher`](Flarial.Launcher.SDK.Launcher.md)
 
