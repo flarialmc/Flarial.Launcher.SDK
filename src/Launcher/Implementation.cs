@@ -16,36 +16,38 @@ public static partial class Launcher
     {
         var assembly = Assembly.GetEntryAssembly();
         Version = assembly.GetName().Version;
-        Executable = assembly.ManifestModule.FullyQualifiedName;
-
-        using StreamReader stream = new(Assembly.GetExecutingAssembly().GetManifestResourceStream("Script.cmd"));
-        Script = stream.ReadToEnd();
+        Destination = assembly.ManifestModule.FullyQualifiedName;
     }
 
     static readonly Version Version;
 
-    static readonly string Script;
+    static readonly string Destination;
 
-    static readonly string Executable;
+    static readonly string Temp = Path.GetTempPath();
+
+    static readonly string System = Environment.GetFolderPath(Environment.SpecialFolder.System);
+
+    static readonly string Content = $"\"{Path.Combine(System, "taskkill.exe")}\" /f /pid {{0}}\n:_\ncopy /y \"{{1}}\" \"{{2}}\"\nif not %errorlevel%==0 goto _\ndel \"%~f0\"";
+
+    static readonly string File = Path.Combine(System, "cmd.exe");
 
     public static partial async Task<bool> AvailableAsync() => new Version((await Web.LauncherAsync())["version"].GetString()) != Version;
 
     public static async partial Task UpdateAsync(Action<int> action)
     {
-        var path = Path.GetTempPath();
-        var executable = Path.Combine(path, Path.GetRandomFileName());
-        var script = Path.Combine(path, Path.ChangeExtension(Path.GetRandomFileName(), ".cmd"));
+        var source = Path.Combine(Temp, Path.GetRandomFileName());
+        var path = Path.Combine(Temp, Path.ChangeExtension(Path.GetRandomFileName(), ".cmd"));
 
-        await Web.DownloadAsync((await Web.LauncherAsync())["downloadUrl"].GetString(), executable, action);
+        await Web.DownloadAsync((await Web.LauncherAsync())["downloadUrl"].GetString(), source, action);
 
-        using StreamWriter stream = new(script);
-        await stream.WriteAsync(string.Format(Script, GetCurrentProcessId(), executable, Executable));
+        using StreamWriter stream = new(path);
+        await stream.WriteAsync(string.Format(Content, GetCurrentProcessId(), source, Destination));
 
-        using (Process.Start(new ProcessStartInfo
-        {
-            FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "conhost.exe"),
-            Arguments = $"--headless \"{script}\"",
-            UseShellExecute = true
+        using (Process.Start(new ProcessStartInfo { 
+            FileName = File,
+            Arguments = $"/c call \"{path}\" & \"{File}\" /c start \"\" \"{Destination}\"",
+            UseShellExecute = false,
+            CreateNoWindow = true
         })) { }
     }
 }
