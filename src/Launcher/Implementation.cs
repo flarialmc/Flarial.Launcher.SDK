@@ -45,7 +45,7 @@ public static partial class Launcher
 
         using (Process.Start(new ProcessStartInfo { 
             FileName = File,
-            Arguments = $"/c call \"{path}\" & \"{File}\" /c start \"\" \"{Destination}\"",
+            Arguments = $"/e:on /c call \"{path}\" & \"{File}\" /c start \"\" \"{Destination}\"",
             UseShellExecute = false,
             CreateNoWindow = true
         })) { }
