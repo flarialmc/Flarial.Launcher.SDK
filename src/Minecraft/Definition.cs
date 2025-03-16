@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.System;
 
 namespace Flarial.Launcher.SDK;
 
@@ -9,28 +10,28 @@ namespace Flarial.Launcher.SDK;
 /// Provides methods to interact with Minecraft: Bedrock Edition.
 /// </summary>
 
-[Obsolete]
+[Obsolete("Use Bedrockix.", true)]
 public static partial class Minecraft
 {
     /// <summary>
     /// Check if Minecraft: Bedrock Edition is installed.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Game.Install`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Game.Installed`.", true)]
     public static partial bool Installed { get; }
 
     /// <summary>
     /// Check if Minecraft Bedrock is running.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Game.Running`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Game.Running`.", true)]
     public static partial bool Running { get; }
 
     /// <summary>
     /// Configure debug mode for Minecraft: Bedrock Edition.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Game.Debug`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Game.Debug`.", true)]
     public static partial bool Debug { set; }
 
     /// <summary>
@@ -41,7 +42,7 @@ public static partial class Minecraft
     /// If the game initialized &amp; launched successfully or not.
     /// </returns>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Game.Launch()`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Game.Launch()`.", true)]
     public static partial bool Launch();
 
     /// <summary>
@@ -56,28 +57,28 @@ public static partial class Minecraft
     /// If the game initialized &amp; launched successfully or not.
     /// </returns>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Loader.Launch(string)`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Loader.Launch(string)`.", true)]
     public static partial bool Launch(string path);
 
     /// <summary>
     /// Terminates Minecraft: Bedrock Edition.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Game.Terminate()`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Game.Terminate()`.", true)]
     public static partial void Terminate();
 
     /// <summary>
     /// Get Minecraft: Bedrock Edition's version.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Metadata.Version`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Metadata.Version`.", true)]
     public static partial string Version { get; }
 
     /// <summary>
     /// Get any running processes of Minecraft: Bedrock Edition.
     /// </summary>
 
-    [Obsolete("Use `Bedrockix.Minecraft.Metadata.Processes`.")]
+    [Obsolete("Use `Bedrockix.Minecraft.Metadata.Processes`.", true)]
     public static partial IEnumerable<Process> Processes { get; }
 
     /// <summary>
@@ -92,6 +93,6 @@ public static partial class Minecraft
     /// If the game initialized &amp; launched successfully or not.
     /// </returns>
 
-    [Obsolete("Use `await Task.Run(() => Bedrockix.Minecraft.Loader.Launch(string).HasValue)`.")]
+    [Obsolete("Use `await Task.Run(() => Bedrockix.Minecraft.Loader.Launch(string).HasValue)`.", true)]
     public static partial Task<bool> LaunchAsync(string path);
 }
