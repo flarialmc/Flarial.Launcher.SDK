@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using Flarial.Launcher;
 
 static class Program
 {
@@ -10,7 +9,7 @@ static class Program
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
         Application.EnableVisualStyles();
-        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new Form());
     }

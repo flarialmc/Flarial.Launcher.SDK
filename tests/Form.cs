@@ -1,6 +1,4 @@
 using System.Drawing;
-using System.Net;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 using Bedrockix.Minecraft;
 using Flarial.Launcher.SDK;
@@ -11,6 +9,12 @@ sealed class Form : System.Windows.Forms.Form
 
     internal Form()
     {
+        Application.ThreadException += (_, e) =>
+        {
+            MessageBox.Show(this, e.Exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.ExitThread();
+        };
+
         Text = "Flarial Launcher";
         Font = SystemFonts.MessageBoxFont;
         ClientSize = LogicalToDeviceUnits(new Size(400, 300));
