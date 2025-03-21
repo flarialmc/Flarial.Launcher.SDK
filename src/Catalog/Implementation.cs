@@ -18,10 +18,6 @@ namespace Flarial.Launcher.SDK;
 
 public sealed partial class Catalog : IEnumerable<string>
 {
-    const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
-
-    const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
-
     readonly static Version Version = new("1.21.51");
 
     static readonly PackageManager Manager = new();
@@ -64,16 +60,16 @@ public sealed partial class Catalog : IEnumerable<string>
     public static async partial Task<Catalog> GetAsync() => await Task.Run(async () =>
     {
         Dictionary<string, string> value = [];
-        var set = (await Web.GetAsync(Supported)).Split('\n').ToHashSet();
+        var collection = await Web.SupportedAsync();
 
-        foreach (var item in await Web.PackagesAsync())
+        foreach (var item in await Web.VersionsAsync())
         {
             var substrings = item.Split(' ');
 
             var identity = substrings[1].Split('_'); if (identity[2] is not "x64") continue;
 
             var key = Get(identity[1]);
-            if (!set.Contains(key)) continue;
+            if (!collection.Contains(key)) continue;
 
             if (!value.ContainsKey(key)) value.Add(key, substrings[0]);
             else value[key] = substrings[0];
@@ -107,8 +103,7 @@ public sealed partial class Catalog : IEnumerable<string>
     static async Task<Uri> GetAsync(string value) => await Task.Run(async () =>
     {
         using StringContent content = new(string.Format(Content, value, '1'), Encoding.UTF8, "application/soap+xml");
-        using var stream = await Web.PostAsync(Store, content);
-        return new Uri(XElement.Load(stream).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value);
+        return await Web.UriAsync(content);
     });
 
     public partial async Task<Uri> UriAsync(string value) => await GetAsync(Collection[value]);

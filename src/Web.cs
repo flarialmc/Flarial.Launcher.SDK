@@ -21,6 +21,10 @@ static partial class Web
 
     const string Launcher = "https://raw.githubusercontent.com/flarialmc/newcdn/refs/heads/main/launcher/launcherVersion.txt";
 
+    const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
+
+    const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
+
     static readonly HttpClient HttpClient = new();
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
@@ -39,12 +43,16 @@ static partial class Web
         }
     }
 
-    internal static async Task<string> GetAsync(string value) => await HttpClient.GetStringAsync(value);
-
-    internal static async Task<Stream> PostAsync(string value, HttpContent content)
+    internal static async Task<HashSet<string>> SupportedAsync()
     {
-        using var message = await HttpClient.PostAsync(value, content);
-        return await message.Content.ReadAsStreamAsync();
+        HashSet<string> collection = [];
+        using StreamReader stream = new(await HttpClient.GetStreamAsync(Supported));
+
+        string value = default;
+        while ((value = await stream.ReadLineAsync()) != default)
+            collection.Add(value);
+
+        return collection;
     }
 
     internal static async Task<Stream> FrameworkAsync()
@@ -53,7 +61,14 @@ static partial class Web
         return await HttpClient.GetStreamAsync(XElement.Load(reader).Descendants("packageContent").Last(_ => _.Value.StartsWith("https://")).Value);
     }
 
-    internal static async Task<IEnumerable<string>> PackagesAsync() => JsonArray.Parse(await HttpClient.GetStringAsync(Releases)).Select(_ => _.GetString());
+    internal static async Task<Uri> UriAsync(HttpContent content)
+    {
+        using var message = await HttpClient.PostAsync(Store, content);
+        using var stream = await message.Content.ReadAsStreamAsync();
+        return new(XElement.Load(stream).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value);
+    }
+
+    internal static async Task<IEnumerable<string>> VersionsAsync() => JsonArray.Parse(await HttpClient.GetStringAsync(Releases)).Select(_ => _.GetString());
 
     internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await HttpClient.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
 
