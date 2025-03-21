@@ -6,42 +6,49 @@ using System.Runtime.CompilerServices;
 
 namespace Flarial.Launcher.SDK;
 
-public sealed partial class Request : IDisposable
+public sealed partial class Request
 {
     readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
 
-    readonly TaskCompletionSource<object> Source = new();
+    readonly TaskCompletionSource<object> Completion = new(), Cancellation = new();
 
     internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> operation, Action<int> action = default)
     {
         (Operation = operation).Completed += (sender, _) =>
         {
-            if (sender.Status is AsyncStatus.Error) Source.TrySetException(sender.ErrorCode);
-            else Source.TrySetResult(default);
+            Cancellation.TrySetResult(default);
+
+            if (sender.Status is AsyncStatus.Error)
+                Completion.TrySetException(sender.ErrorCode);
+            else
+                Completion.TrySetResult(default);
         };
-        if (action != default) Operation.Progress += (_, value) => { if (value.state is DeploymentProgressState.Processing) action((int)value.percentage); };
+
+        if (action != default)
+            Operation.Progress += (_, value) =>
+            {
+                if (value.state is DeploymentProgressState.Processing)
+                    action((int)value.percentage);
+            };
     }
 
-    public partial TaskAwaiter<object> GetAwaiter() => Source.Task.GetAwaiter();
+    public partial TaskAwaiter<object> GetAwaiter() => Completion.Task.GetAwaiter();
 
     public partial void Cancel()
     {
-        if (!Source.Task.IsCompleted)
+        if (!Cancellation.Task.IsCompleted)
         {
             Operation.Cancel();
-            ((IAsyncResult)Source.Task).AsyncWaitHandle.WaitOne();
+            Cancellation.Task.GetAwaiter().GetResult();
         }
     }
 
     public partial async Task CancelAsync()
     {
-        if (!Source.Task.IsCompleted)
+        if (!Cancellation.Task.IsCompleted)
         {
             Operation.Cancel();
-            await this;
+            await Cancellation.Task;
         }
     }
-
-    public partial void Dispose() { Operation.Close(); Source.Task.Dispose(); GC.SuppressFinalize(this); }
-
 }
