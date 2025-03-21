@@ -26,6 +26,8 @@
 
     Provides methods to manage Flarial Client's launcher.
 
+## Deprecated
+
 > [!CAUTION]
 > **The following classes are marked as deprecated.**
 
