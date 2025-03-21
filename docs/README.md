@@ -1,7 +1,7 @@
 # Documentation
 
 > [!CAUTION]
-> - Before calling any APIs, consider checking if the game is installed or not using [`Minecraft.Installed`](Flarial.Launcher.SDK.Minecraft.md#minecraftinstalled).
+> - Before calling any APIs, consider checking if the game is installed or not using [`Game.Installed`](https://github.com/Aetopia/Bedrockix/blob/main/docs/Bedrockix.Minecraft.Game.md#gameinstalled).
 > - Files used by the SDK are stored in the current working directory.
 >
 >   - Consider setting the working directory before calling any APIs.
