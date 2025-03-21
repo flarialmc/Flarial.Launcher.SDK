@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFrameworks>net481;net9.0-windows10.0.19041.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Optimize>true</Optimize>
     <PublishRelease>true</PublishRelease>
@@ -32,12 +32,12 @@
     <None Include="..\README.md" Pack="true" PackagePath="" />
     <None Include="Flarial.Launcher.SDK.targets" Pack="true" PackagePath="build" />
     <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml" LogicalName="GetExtendedUpdateInfo2.xml" />
+    <PackageReference Include="Bedrockix" Version="*" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <Reference Include="System.Net.Http" />
     <Reference Include="System.IO.Compression" />
-    <PackageReference Include="Bedrockix" Version="*" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.2" />
   </ItemGroup>
 

@@ -34,14 +34,14 @@ public sealed partial class Request
             };
     }
 
-    public partial ConfiguredTaskAwaitable<object>.ConfiguredTaskAwaiter GetAwaiter() => Completion.Task.ConfigureAwait(default).GetAwaiter();
+    public partial ConfiguredTaskAwaitable<object>.ConfiguredTaskAwaiter GetAwaiter() => Completion.Task.ConfigureAwait(false).GetAwaiter();
 
     public partial void Cancel()
     {
         if (!Cancellation.Task.IsCompleted)
         {
             Operation.Cancel();
-            Cancellation.Task.ConfigureAwait(default).GetAwaiter().GetResult();
+            Cancellation.Task.ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 
@@ -50,7 +50,7 @@ public sealed partial class Request
         if (!Cancellation.Task.IsCompleted)
         {
             Operation.Cancel();
-            await Cancellation.Task.ConfigureAwait(default);
+            await Cancellation.Task.ConfigureAwait(false);
         }
     }
 }
