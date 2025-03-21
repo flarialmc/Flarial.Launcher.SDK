@@ -20,6 +20,20 @@ public sealed partial class Catalog
     public static partial Task<Catalog> GetAsync();
 
     /// <summary>
+    /// Asynchronously resolves a download link for the specified version.
+    /// </summary>
+
+    /// <param name="value">
+    /// The version to resolve.
+    /// </param>
+
+    /// <returns>
+    /// The download link for the specified version.
+    /// </returns>
+
+    public partial Task<Uri> UriAsync(string value);
+
+    /// <summary>
     /// Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
     /// </summary>
 

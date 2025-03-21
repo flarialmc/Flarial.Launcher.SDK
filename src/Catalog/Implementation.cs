@@ -16,7 +16,6 @@ using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher.SDK;
 
-
 public sealed partial class Catalog : IEnumerable<string>
 {
     const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
@@ -25,9 +24,25 @@ public sealed partial class Catalog : IEnumerable<string>
 
     readonly static Version Version = new("1.21.51");
 
-    static readonly PackageManager PackageManager = new();
+    static readonly PackageManager Manager = new();
 
-    static string _(string value)
+    readonly Dictionary<string, string> Collection;
+
+    static readonly string Content = new Func<string>(() =>
+    {
+        using StreamReader reader = new(Assembly.GetExecutingAssembly().GetManifestResourceStream("GetExtendedUpdateInfo2.xml"));
+        return reader.ReadToEnd();
+    })();
+
+    static readonly AddPackageOptions Options = new()
+    {
+        ForceAppShutdown = true,
+        ForceUpdateFromAnyVersion = true
+    };
+
+    Catalog(Dictionary<string, string> value) => Collection = value;
+
+    static string Get(string value)
     {
         var substrings = value.Split('.');
         ushort major = ushort.Parse(substrings[0]), minor, build;
@@ -57,7 +72,7 @@ public sealed partial class Catalog : IEnumerable<string>
 
             var identity = substrings[1].Split('_'); if (identity[2] is not "x64") continue;
 
-            var key = _(identity[1]);
+            var key = Get(identity[1]);
             if (!set.Contains(key)) continue;
 
             if (!value.ContainsKey(key)) value.Add(key, substrings[0]);
@@ -67,61 +82,16 @@ public sealed partial class Catalog : IEnumerable<string>
         return new Catalog(value);
     });
 
-    /// <summary>
-    /// Enumerates versions present in the catalog.
-    /// </summary>
-
-    public IEnumerator<string> GetEnumerator() => Value.Keys.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    readonly Dictionary<string, string> Value;
-
-    static string Content;
-
-    Catalog(Dictionary<string, string> value) => Value = value;
-
-    static async Task<string> GetExtendedUpdateInfo2()
+    static async Task DependencyAsync(string value) => await Task.Run(async () =>
     {
-        if (Content is null)
-        {
-            using StreamReader reader = new(Assembly.GetExecutingAssembly().GetManifestResourceStream("GetExtendedUpdateInfo2.xml"));
-            Content = await reader.ReadToEndAsync();
-        }
-        return Content;
-    }
-
-    static async Task<Uri> UriAsync(string value)
-    {
-        using StringContent content = new(string.Format(await GetExtendedUpdateInfo2(), value, '1'), Encoding.UTF8, "application/soap+xml");
-        using var message = await Web.PostAsync(Store, content); message.EnsureSuccessStatusCode();
-        return new(await Task.Run(async () =>
-        {
-            return XElement.Parse(await message.Content.ReadAsStringAsync()).Descendants().
-            FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value;
-        }));
-    }
-
-    static readonly AddPackageOptions Options = new()
-    {
-        ForceAppShutdown = true,
-        ForceUpdateFromAnyVersion = true
-    };
-
-    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Value.ContainsKey(Metadata.Version));
-
-    public async partial Task<Request> InstallAsync(string value, Action<int> action) => await Task.Run(async () =>
-    {
-        var _ = Value[value];
-
-        if (new Version(value) <= Version && !PackageManager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any())
+        if (new Version(value) <= Version && !Manager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any())
         {
             var path = Path.Combine(Path.GetTempPath(), "Microsoft.Services.Store.Engagement.x64.10.0.appx");
 
             using var stream = await Web.FrameworkAsync(); using ZipArchive archive = new(stream);
             archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
 
-            var @object = PackageManager.AddPackageAsync(new Uri(path), default, default);
+            var @object = Manager.AddPackageAsync(new Uri(path), default, default);
 
             if (@object.Status is AsyncStatus.Started)
             {
@@ -132,7 +102,31 @@ public sealed partial class Catalog : IEnumerable<string>
 
             if (@object.Status is AsyncStatus.Error) throw @object.ErrorCode;
         }
-
-        return new Request(PackageManager.AddPackageByUriAsync(await UriAsync(_), Options), action);
     });
+
+    static async Task<Uri> GetAsync(string value) => await Task.Run(async () =>
+    {
+        using StringContent content = new(string.Format(Content, value, '1'), Encoding.UTF8, "application/soap+xml");
+        using var stream = await Web.PostAsync(Store, content);
+        return new Uri(XElement.Load(stream).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value);
+    });
+
+    public partial async Task<Uri> UriAsync(string value) => await GetAsync(Collection[value]);
+
+    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Collection.ContainsKey(Metadata.Version));
+
+    public async partial Task<Request> InstallAsync(string value, Action<int> action)
+    {
+        var @this = Collection[value];
+        await DependencyAsync(value);
+        return new Request(Manager.AddPackageByUriAsync(await GetAsync(@this), Options), action);
+    }
+
+    /// <summary>
+    /// Enumerates versions present in the catalog.
+    /// </summary>
+
+    public IEnumerator<string> GetEnumerator() => Collection.Keys.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

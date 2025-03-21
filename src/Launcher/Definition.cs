@@ -8,19 +8,26 @@ namespace Flarial.Launcher.SDK;
 /// Provides methods to manage Flarial Client's launcher.
 /// </summary>
 
-[SuppressUnmanagedCodeSecurity]
 public static partial class Launcher
 {
     /// <summary>
     /// Asynchronously check if a launcher update is available. 
     /// </summary>
 
+    [Obsolete("Use `Launcher.UpdateAsync()` instead.", true)]
     public static partial Task<bool> AvailableAsync();
 
     /// <summary>
-    ///  Asynchronously force updates the launcher to the latest version.
+    ///  Asynchronously check &amp; if required, update the launcher.
     /// </summary>
-    /// <param name="action">Callback for update progress.</param>
 
-    public static partial Task UpdateAsync(Action<int> action = default);
+    /// <param name="action">
+    /// Callback for update progress.
+    /// </param>
+
+    /// <returns>
+    /// A boolean value that represents the availability of an update.
+    /// </returns>
+
+    public static partial Task<bool> UpdateAsync(Action<int> action = default);
 }

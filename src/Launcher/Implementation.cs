@@ -2,16 +2,12 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Flarial.Launcher.SDK;
 
 public static partial class Launcher
 {
-    [DllImport("Kernel32")]
-    static extern uint GetCurrentProcessId();
-
     static Launcher()
     {
         var assembly = Assembly.GetEntryAssembly();
@@ -23,6 +19,8 @@ public static partial class Launcher
 
     static readonly string Destination;
 
+    static readonly int Identifier = Native.GetCurrentProcessId();
+
     static readonly string Temp = Path.GetTempPath();
 
     static readonly string System = Environment.GetFolderPath(Environment.SpecialFolder.System);
@@ -33,21 +31,28 @@ public static partial class Launcher
 
     public static partial async Task<bool> AvailableAsync() => new Version((await Web.LauncherAsync())["version"].GetString()) != Version;
 
-    public static async partial Task UpdateAsync(Action<int> action)
+    public static async partial Task<bool> UpdateAsync(Action<int> action)
     {
+        var @this = await Web.LauncherAsync();
+
+        if (new Version(@this["version"].GetString()) == Version) return false;
+
         var source = Path.Combine(Temp, Path.GetRandomFileName());
         var path = Path.Combine(Temp, Path.ChangeExtension(Path.GetRandomFileName(), ".cmd"));
 
-        await Web.DownloadAsync((await Web.LauncherAsync())["downloadUrl"].GetString(), source, action);
+        await Web.DownloadAsync(@this["downloadUrl"].GetString(), source, action);
 
         using StreamWriter stream = new(path);
-        await stream.WriteAsync(string.Format(Content, GetCurrentProcessId(), source, Destination));
+        await stream.WriteAsync(string.Format(Content, Identifier, source, Destination));
 
-        using (Process.Start(new ProcessStartInfo { 
+        using (Process.Start(new ProcessStartInfo
+        {
             FileName = File,
             Arguments = $"/e:on /c call \"{path}\" & \"{File}\" /c start \"\" \"{Destination}\"",
             UseShellExecute = false,
             CreateNoWindow = true
         })) { }
+
+        return true;
     }
 }

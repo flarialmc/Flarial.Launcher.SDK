@@ -8,15 +8,28 @@ using Bedrockix.Minecraft;
 
 namespace Flarial.Launcher.SDK;
 
+readonly ref struct Build
+{
+    internal Build(string path, string address)
+    {
+        Path = path;
+        Address = address;
+    }
+
+    internal readonly string Path;
+
+    internal readonly string Address;
+}
+
 public static partial class Client
 {
     static readonly HashAlgorithm Algorithm = SHA256.Create();
 
     static readonly object Lock = new();
 
-    static readonly (string RequestUri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Flarial.Launcher.SDK\Flarial.Client.Release.dll");
+    static readonly (string Uri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Flarial.Launcher.SDK\Flarial.Client.Release.dll");
 
-    static readonly (string RequestUri, string Path) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll");
+    static readonly (string Uri, string Path) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll");
 
     static async Task<bool> VerifyAsync(string path, bool value = false) => await Task.Run(async () =>
     {

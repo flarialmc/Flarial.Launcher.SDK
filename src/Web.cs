@@ -41,7 +41,11 @@ static partial class Web
 
     internal static async Task<string> GetAsync(string value) => await HttpClient.GetStringAsync(value);
 
-    internal static async Task<HttpResponseMessage> PostAsync(string value, HttpContent content) => await HttpClient.PostAsync(value, content);
+    internal static async Task<Stream> PostAsync(string value, HttpContent content)
+    {
+        using var message = await HttpClient.PostAsync(value, content);
+        return await message.Content.ReadAsStreamAsync();
+    }
 
     internal static async Task<Stream> FrameworkAsync()
     {

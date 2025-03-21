@@ -7,6 +7,8 @@ Provides methods to manage Minecraft versions compatible with Flarial Client.
 
 - [`Catalog.GetAsync()`](#cataloggetasync)
 
+- [`Catalog.UriAsync(string)`](#cataloguriasyncstring)
+
 - [`Catalog.CompatibleAsync()`](#catalogcompatibleasync)
 
 - [`Catalog.GetEnumerator()`](#cataloggetenumerator)
@@ -18,6 +20,14 @@ Provides methods to manage Minecraft versions compatible with Flarial Client.
  Asynchronously gets a list of versions.
             
 - Returns: A list of versions supported by Flarial Client.
+
+## `Catalog.UriAsync(string)`
+
+Asynchronously resolves a download link for the specified version.
+    
+- Parameter: The version to resolve.
+
+- Returns: The download link for the specified version.
 
 ## `Catalog.CompatibleAsync()`
 
