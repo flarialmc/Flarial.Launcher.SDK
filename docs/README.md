@@ -26,11 +26,6 @@
 
     Provides methods to manage Flarial Client's launcher.
 
-## Deprecated
-
-> [!CAUTION]
-> **The following classes are marked as deprecated.**
-
 - [`Flarial.Launcher.SDK.Minecraft`](Flarial.Launcher.SDK.Minecraft.md)
 
     Provides methods to interact with Minecraft: Bedrock Edition.

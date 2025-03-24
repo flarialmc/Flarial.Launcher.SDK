@@ -1,6 +1,3 @@
-> [!CAUTION]
-> This class is deprecated.
-
 # `Flarial.Launcher.SDK.Minecraft`
 
 Provides methods to interact with Minecraft: Bedrock Edition.
@@ -12,6 +9,8 @@ Provides methods to interact with Minecraft: Bedrock Edition.
 - [`Minecraft.Debug`](#minecraftdebug)
 
 - [`Minecraft.Version`](#minecraftversion)
+
+- [`Minecraft.VersionAsync()`](#minecraftversionasync)
 
 - [`Minecraft.Processes`](#minecraftprocesses)
 
@@ -38,6 +37,10 @@ Configure debug mode for Minecraft: Bedrock Edition.
 ## `Minecraft.Version`
 
 Get Minecraft: Bedrock Edition's version.
+
+## `Minecraft.VersionAsync()`
+
+Asynchronously get Minecraft: Bedrock Edition's version.
 
 ## `Minecraft.Processes`
 

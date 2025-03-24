@@ -14,7 +14,6 @@ public static partial class Launcher
     /// Asynchronously check if a launcher update is available. 
     /// </summary>
 
-    [Obsolete("Use `Launcher.UpdateAsync()` instead.", true)]
     public static partial Task<bool> AvailableAsync();
 
     /// <summary>

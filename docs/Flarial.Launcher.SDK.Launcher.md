@@ -8,9 +8,6 @@ Provides methods to manage Flarial Client's launcher.
 
 ## `Launcher.AvailableAsync()`
 
-> [!CAUTION]
-> This method is deprecated.
-
 Asynchronously check if a launcher update is available. 
 
 ## `Launcher.UpdateAsync(Action<int>)`
