@@ -108,7 +108,7 @@ public sealed partial class Catalog : IEnumerable<string>
 
     public partial async Task<Uri> UriAsync(string value) => await GetAsync(Collection[value]);
 
-    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Collection.ContainsKey(Metadata.Version));
+    public async partial Task<bool> CompatibleAsync() => Collection.ContainsKey(await Metadata.VersionAsync());
 
     public async partial Task<Request> InstallAsync(string value, Action<int> action)
     {
