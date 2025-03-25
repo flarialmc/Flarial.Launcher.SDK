@@ -25,7 +25,7 @@ public static partial class Launcher
 
     static readonly string System = Environment.GetFolderPath(Environment.SpecialFolder.System);
 
-    static readonly string Content = $"\"{Path.Combine(System, "taskkill.exe")}\" /f /pid {{0}}\n:_\ncopy /y \"{{1}}\" \"{{2}}\"\nif not %errorlevel%==0 goto _\ndel \"%~f0\"";
+    static readonly string Content = $"chcp 65001\n\"{Path.Combine(System, "taskkill.exe")}\" /f /pid {{0}}\n:_\ncopy /y \"{{1}}\" \"{{2}}\"\nif not %errorlevel%==0 goto _\ndel \"%~f0\"";
 
     static readonly string File = Path.Combine(System, "cmd.exe");
 
