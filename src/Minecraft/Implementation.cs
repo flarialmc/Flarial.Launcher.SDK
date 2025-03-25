@@ -21,8 +21,6 @@ public static partial class Minecraft
 
     public static partial string Version => Metadata.Version;
 
-    public static partial async Task<string> VersionAsync() => await Metadata.VersionAsync().ConfigureAwait(false);
-
     public static partial IEnumerable<Process> Processes => Metadata.Processes;
 
     public static async partial Task<bool> LaunchAsync(string path) => await Task.Run(() => Launch(path));

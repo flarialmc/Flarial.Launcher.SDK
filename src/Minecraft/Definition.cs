@@ -66,12 +66,6 @@ public static partial class Minecraft
     public static partial string Version { get; }
 
     /// <summary>
-    /// Asynchronously get Minecraft: Bedrock Edition's version.
-    /// </summary>
-
-    public static partial Task<string> VersionAsync();
-
-    /// <summary>
     /// Get any running processes of Minecraft: Bedrock Edition.
     /// </summary>
 

@@ -10,8 +10,6 @@ Provides methods to interact with Minecraft: Bedrock Edition.
 
 - [`Minecraft.Version`](#minecraftversion)
 
-- [`Minecraft.VersionAsync()`](#minecraftversionasync)
-
 - [`Minecraft.Processes`](#minecraftprocesses)
 
 - [`Minecraft.Launch()`](#minecraftlaunch)
@@ -37,10 +35,6 @@ Configure debug mode for Minecraft: Bedrock Edition.
 ## `Minecraft.Version`
 
 Get Minecraft: Bedrock Edition's version.
-
-## `Minecraft.VersionAsync()`
-
-Asynchronously get Minecraft: Bedrock Edition's version.
 
 ## `Minecraft.Processes`
 
