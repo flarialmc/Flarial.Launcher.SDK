@@ -102,7 +102,7 @@ sealed class Versions : UserControl
             }));
 
             tableLayoutPanel.Enabled = true;
-            await request; request = default;
+            await request; 
 
             SuspendLayout();
             tableLayoutPanel.Visible = tableLayoutPanel.Enabled = default;
