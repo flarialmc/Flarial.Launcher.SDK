@@ -16,14 +16,11 @@ public sealed partial class Request
     {
         (Operation = operation).Completed += (sender, _) =>
         {
-            try
-            {
-                if (sender.Status is AsyncStatus.Error)
-                    Completion.TrySetException(sender.ErrorCode);
-                else
-                    Completion.TrySetResult(default);
-            }
-            finally { Cancellation.TrySetResult(default); }
+            if (sender.Status is AsyncStatus.Error)
+                Completion.TrySetException(sender.ErrorCode);
+            else
+                Completion.TrySetResult(default);
+            Cancellation.TrySetResult(default);
         };
 
         if (action != default)
@@ -34,23 +31,19 @@ public sealed partial class Request
             };
     }
 
-    public partial ConfiguredTaskAwaitable<object>.ConfiguredTaskAwaiter GetAwaiter() => Completion.Task.ConfigureAwait(false).GetAwaiter();
+    public partial TaskAwaiter<object> GetAwaiter() => Completion.Task.GetAwaiter();
 
     public partial void Cancel()
     {
-        if (!Cancellation.Task.IsCompleted)
-        {
-            Operation.Cancel();
-            Cancellation.Task.ConfigureAwait(false).GetAwaiter().GetResult();
-        }
+        if (Cancellation.Task.IsCompleted) return;
+        Operation.Cancel();
+        Cancellation.Task.GetAwaiter().GetResult();
     }
 
     public partial async Task CancelAsync()
     {
-        if (!Cancellation.Task.IsCompleted)
-        {
-            Operation.Cancel();
-            await Cancellation.Task.ConfigureAwait(false);
-        }
+        if (Cancellation.Task.IsCompleted) return;
+        Operation.Cancel();
+        await Cancellation.Task;
     }
 }

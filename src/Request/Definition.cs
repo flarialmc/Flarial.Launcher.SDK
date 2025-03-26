@@ -13,7 +13,7 @@ public sealed partial class Request
     ///  Gets an awaiter for the installation request.
     /// </summary>
 
-    public partial ConfiguredTaskAwaitable<object>.ConfiguredTaskAwaiter GetAwaiter();
+    public partial TaskAwaiter<object> GetAwaiter();
 
     /// <summary>
     /// Cancels the installation request.
