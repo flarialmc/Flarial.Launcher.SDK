@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
@@ -25,7 +26,11 @@ static partial class Web
 
     const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
 
-    static readonly HttpClient HttpClient = new();
+    static readonly HttpClient HttpClient = new(new HttpClientHandler()
+    {
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+        AllowAutoRedirect = true
+    });
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
     {
