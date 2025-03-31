@@ -87,7 +87,7 @@ public sealed partial class Catalog : IEnumerable<string>
             using var stream = await Web.FrameworkAsync(); using ZipArchive archive = new(stream);
             archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
 
-            var @object = Manager.AddPackageAsync(new Uri(path), default, default);
+            var @object = Manager.AddPackageAsync(new(path), default, default);
 
             if (@object.Status is AsyncStatus.Started)
             {
