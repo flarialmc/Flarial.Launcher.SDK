@@ -13,7 +13,7 @@ Provides methods to manage Minecraft versions compatible with Flarial Client.
 
 - [`Catalog.GetEnumerator()`](#cataloggetenumerator)
 
-- [`Catalog.FrameworksAsync()`]
+- [`Catalog.FrameworksAsync()`](#catalogframeworksasync)
 
 - [`Catalog.InstallAsync(string, Action<int>)`](#cataloginstallasyncstring-actionint)
 
