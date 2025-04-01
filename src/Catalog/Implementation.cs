@@ -18,8 +18,6 @@ namespace Flarial.Launcher.SDK;
 
 public sealed partial class Catalog : IEnumerable<string>
 {
-    readonly static Version Version = new("1.21.51");
-
     static readonly PackageManager Manager = new();
 
     readonly Dictionary<string, string> Collection;
@@ -78,44 +76,32 @@ public sealed partial class Catalog : IEnumerable<string>
         return new Catalog(value);
     });
 
-    static async Task DependencyAsync(string value) => await Task.Run(async () =>
+    public partial async Task FrameworksAsync()
     {
-        if (new Version(value) <= Version && !Manager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any())
+        if (Manager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any()) return;
+
+        await Task.Run(async () =>
         {
-            var path = Path.Combine(Path.GetTempPath(), "Microsoft.Services.Store.Engagement.x64.10.0.appx");
+            var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
-            using var stream = await Web.FrameworkAsync(); using ZipArchive archive = new(stream);
-            archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
+            using (var stream = await Web.FrameworkAsync()) using (ZipArchive archive = new(stream))
+                archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
 
-            var @object = Manager.AddPackageAsync(new(path), default, default);
+            await Manager.AddPackageAsync(new(path), default, default);
+        });
+    }
 
-            if (@object.Status is AsyncStatus.Started)
-            {
-                using ManualResetEventSlim @event = new();
-                @object.Completed += (_, _) => @event.Set();
-                @event.Wait();
-            }
-
-            if (@object.Status is AsyncStatus.Error) throw @object.ErrorCode;
-        }
-    });
-
-    static async Task<Uri> GetAsync(string value) => await Task.Run(async () =>
+    async Task<Uri> PackageAsync(string value) => await Task.Run(async () =>
     {
-        using StringContent content = new(string.Format(Content, value, '1'), Encoding.UTF8, "application/soap+xml");
-        return await Web.UriAsync(content);
+        using StringContent content = new(string.Format(Content, Collection[value], '1'), Encoding.UTF8, "application/soap+xml");
+        await FrameworksAsync(); return await Web.UriAsync(content);
     });
 
-    public partial async Task<Uri> UriAsync(string value) => await GetAsync(Collection[value]);
+    public partial async Task<Uri> UriAsync(string value) => await PackageAsync(value);
 
     public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Collection.ContainsKey(Metadata.Version));
 
-    public async partial Task<Request> InstallAsync(string value, Action<int> action)
-    {
-        var @this = Collection[value];
-        await DependencyAsync(value);
-        return new Request(Manager.AddPackageByUriAsync(await GetAsync(@this), Options), action);
-    }
+    public async partial Task<Request> InstallAsync(string value, Action<int> action) => new(Manager.AddPackageByUriAsync(await PackageAsync(value), Options), action);
 
     /// <summary>
     /// Enumerates versions present in the catalog.

@@ -44,6 +44,12 @@ public sealed partial class Catalog
     public partial Task<bool> CompatibleAsync();
 
     /// <summary>
+    /// Installs frameworks required by Minecraft: Bedrock Edition.
+    /// </summary>
+    
+    public partial Task FrameworksAsync();
+
+    /// <summary>
     /// Asynchronously starts the installation of a version.
     /// </summary>
 
