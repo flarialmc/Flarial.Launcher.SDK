@@ -91,7 +91,7 @@ public sealed partial class Catalog : IEnumerable<string>
                 using (var stream = await Web.FrameworkAsync()) using (ZipArchive archive = new(stream))
                     archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
 
-                await Manager.AddPackageAsync(new(path), default, default);
+                await Manager.AddPackageByUriAsync(new(path), Options);
             });
         }
         finally { Semaphore.Release(); }
