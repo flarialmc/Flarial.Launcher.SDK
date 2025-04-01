@@ -43,6 +43,9 @@ Enumerates versions present in the catalog.
 
 ## `Catalog.FrameworksAsync()`
 
+> [!TIP]
+> Consider calling this method before registering a new package manifest.
+
 Asynchronously installs frameworks required by Minecraft: Bedrock Edition.
 
 ## `Catalog.InstallAsync(string, Action<int>)`
