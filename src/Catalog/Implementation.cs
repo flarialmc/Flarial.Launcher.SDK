@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.Management.Deployment;
 using System.IO.Compression;
-using System.Threading;
-using Windows.Foundation;
 using Bedrockix.Minecraft;
+using System.Threading;
 
 namespace Flarial.Launcher.SDK;
 
 public sealed partial class Catalog : IEnumerable<string>
 {
     static readonly PackageManager Manager = new();
+
+    static readonly SemaphoreSlim Semaphore = new(1, 1);
 
     readonly Dictionary<string, string> Collection;
 
@@ -76,19 +77,24 @@ public sealed partial class Catalog : IEnumerable<string>
         return new Catalog(value);
     });
 
-    public partial async Task FrameworksAsync()
+    public static partial async Task FrameworksAsync()
     {
-        if (Manager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any()) return;
-
-        await Task.Run(async () =>
+        await Semaphore.WaitAsync();
+        try
         {
-            var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            if (Manager.FindPackagesForUser(string.Empty, "Microsoft.Services.Store.Engagement_8wekyb3d8bbwe").Any()) return;
 
-            using (var stream = await Web.FrameworkAsync()) using (ZipArchive archive = new(stream))
-                archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
+            await Task.Run(async () =>
+            {
+                var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
-            await Manager.AddPackageAsync(new(path), default, default);
-        });
+                using (var stream = await Web.FrameworkAsync()) using (ZipArchive archive = new(stream))
+                    archive.Entries.First(_ => _.Name is "Microsoft.Services.Store.Engagement.x64.10.0.appx").ExtractToFile(path, true);
+
+                await Manager.AddPackageAsync(new(path), default, default);
+            });
+        }
+        finally { Semaphore.Release(); }
     }
 
     async Task<Uri> PackageAsync(string value) => await Task.Run(async () =>
