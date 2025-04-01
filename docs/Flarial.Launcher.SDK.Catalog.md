@@ -13,6 +13,8 @@ Provides methods to manage Minecraft versions compatible with Flarial Client.
 
 - [`Catalog.GetEnumerator()`](#cataloggetenumerator)
 
+- [`Catalog.FrameworksAsync()`]
+
 - [`Catalog.InstallAsync(string, Action<int>)`](#cataloginstallasyncstring-actionint)
 
 ## `Catalog.GetAsync()`
@@ -31,13 +33,17 @@ Asynchronously resolves a download link for the specified version.
 
 ## `Catalog.CompatibleAsync()`
 
-Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
+Asynchronously checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
 
 - Returns: A boolean value that represents compatibility.
 
 ## `Catalog.GetEnumerator()`
 
 Enumerates versions present in the catalog.
+
+## `Catalog.FrameworksAsync()`
+
+Asynchronously installs frameworks required by Minecraft: Bedrock Edition.
 
 ## `Catalog.InstallAsync(string, Action<int>)`
 

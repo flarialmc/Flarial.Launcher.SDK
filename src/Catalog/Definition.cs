@@ -34,7 +34,7 @@ public sealed partial class Catalog
     public partial Task<Uri> UriAsync(string value);
 
     /// <summary>
-    /// Checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
+    /// Asynchronously checks if the installed version of Minecraft Bedrock Edition is compatible with Flarial.
     /// </summary>
 
     /// <returns>
@@ -44,7 +44,7 @@ public sealed partial class Catalog
     public partial Task<bool> CompatibleAsync();
 
     /// <summary>
-    /// Installs frameworks required by Minecraft: Bedrock Edition.
+    /// Asynchronously installs frameworks required by Minecraft: Bedrock Edition.
     /// </summary>
     
     public partial Task FrameworksAsync();
