@@ -23,5 +23,7 @@ public static partial class Minecraft
 
     public static partial IEnumerable<Process> Processes => Metadata.Processes;
 
+    public static partial bool Unpackaged => Game.Unpackaged;
+
     public static async partial Task<bool> LaunchAsync(string path) => await Task.Run(() => Launch(path));
 }

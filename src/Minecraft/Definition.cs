@@ -72,6 +72,12 @@ public static partial class Minecraft
     public static partial IEnumerable<Process> Processes { get; }
 
     /// <summary>
+    /// Check if Minecraft: Bedrock Edition is unpackaged.
+    /// </summary>
+
+    public static partial bool Unpackaged { get; }
+
+    /// <summary>
     /// Asynchronously launches &amp; loads a dynamic link library into Minecraft: Bedrock Edition.
     /// </summary>
 

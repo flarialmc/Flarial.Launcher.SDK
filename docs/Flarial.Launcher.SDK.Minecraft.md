@@ -16,6 +16,8 @@ Provides methods to interact with Minecraft: Bedrock Edition.
 
 - [`Minecraft.Launch(string)`](#minecraftlaunchstring)
 
+- [`Minecraft.Unpackaged`](#minecraftunpackaged)
+
 - [`Minecraft.LaunchAsync(string)`](#minecraftlaunchasyncstring)
 
 - [`Minecraft.Terminate()`](#minecraftterminate)
@@ -39,6 +41,10 @@ Get Minecraft: Bedrock Edition's version.
 ## `Minecraft.Processes`
 
 Get any running processes of Minecraft: Bedrock Edition.
+
+## `Minecraft.Unpackaged`
+
+Check if Minecraft: Bedrock Edition is unpackaged.
 
 ## `Minecraft.Launch()`
 
