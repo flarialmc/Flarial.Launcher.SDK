@@ -22,8 +22,8 @@ public sealed partial class Request
     public partial void Cancel();
 
     /// <summary>
-    ///  Asynchronously cancels the installation request.
+    /// Releases resources held by the installation request.
     /// </summary>
 
-    public partial Task CancelAsync();
+    public partial void Dispose();
 }

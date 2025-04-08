@@ -3,24 +3,26 @@ using Windows.Foundation;
 using System.Threading.Tasks;
 using Windows.Management.Deployment;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Flarial.Launcher.SDK;
 
-public sealed partial class Request
+public sealed partial class Request : IDisposable
 {
-    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
+    readonly WaitHandle Handle;
 
-    readonly TaskCompletionSource<object> Completion = new(), Cancellation = new();
+    readonly TaskCompletionSource<object> Source;
+
+    readonly IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> Operation;
 
     internal Request(IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> operation, Action<int> action = default)
     {
-        (Operation = operation).Completed += (sender, _) =>
+        Handle = ((IAsyncResult)(Source = new()).Task).AsyncWaitHandle;
+
+        (Operation = operation).Completed += (@this, _) =>
         {
-            if (sender.Status is AsyncStatus.Error)
-                Completion.TrySetException(sender.ErrorCode);
-            else
-                Completion.TrySetResult(default);
-            Cancellation.TrySetResult(default);
+            if (@this.Status is AsyncStatus.Error) Source.TrySetException(@this.ErrorCode);
+            else Source.TrySetResult(default);
         };
 
         if (action != default)
@@ -31,19 +33,24 @@ public sealed partial class Request
             };
     }
 
-    public partial TaskAwaiter<object> GetAwaiter() => Completion.Task.GetAwaiter();
+    public partial TaskAwaiter<object> GetAwaiter() => Source.Task.GetAwaiter();
 
     public partial void Cancel()
     {
-        if (Cancellation.Task.IsCompleted) return;
-        Operation.Cancel();
-        Cancellation.Task.GetAwaiter().GetResult();
+        if (Source.Task.IsCompleted) return;
+        Operation.Cancel(); Handle.WaitOne();
     }
 
-    public partial async Task CancelAsync()
+    public partial void Dispose()
     {
-        if (Cancellation.Task.IsCompleted) return;
-        Operation.Cancel();
-        await Cancellation.Task;
+        if (!Source.Task.IsCompleted) Cancel();
+        Handle.Dispose(); Source.Task.Dispose();
+        GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// Releases resources held by the installation request.
+    /// </summary>
+
+    ~Request() => Dispose();
 }
