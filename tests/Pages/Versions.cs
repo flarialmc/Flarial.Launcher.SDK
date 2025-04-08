@@ -71,7 +71,7 @@ sealed class Versions : UserControl
 
         Request request = default;
 
-        Application.ThreadExit += (_, _) => request?.Cancel(); ;
+        Application.ThreadExit += (_, _) => { using (request) request?.Cancel(); };
 
         listBox.VisibleChanged += async (_, _) =>
         {
@@ -92,17 +92,18 @@ sealed class Versions : UserControl
             button1.Visible = listBox.Enabled = default;
             ResumeLayout();
 
-            request = await @this.Catalog.InstallAsync((string)listBox.SelectedItem, (_) => Invoke(() =>
+            using (request = await @this.Catalog.InstallAsync((string)listBox.SelectedItem, (_) => Invoke(() =>
             {
                 if (progressBar.Value != _)
                 {
                     if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
                     progressBar.Value = _;
                 }
-            }));
-
-            tableLayoutPanel.Enabled = true;
-            await request; request = default;
+            })))
+            {
+                tableLayoutPanel.Enabled = true;
+                await request; request = default;
+            }
 
             SuspendLayout();
             tableLayoutPanel.Visible = tableLayoutPanel.Enabled = default;
@@ -116,7 +117,7 @@ sealed class Versions : UserControl
         button2.Click += async (_, _) =>
         {
             tableLayoutPanel.Enabled = default;
-            await request.CancelAsync();
+            await Task.Run(request.Cancel);
         };
 
         panel.RowStyles.Add(new() { SizeType = SizeType.Percent, Height = 100 });

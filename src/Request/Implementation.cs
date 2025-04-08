@@ -41,12 +41,7 @@ public sealed partial class Request : IDisposable
         Operation.Cancel(); Handle.WaitOne();
     }
 
-    public partial void Dispose()
-    {
-        if (!Source.Task.IsCompleted) Cancel();
-        Handle.Dispose(); Source.Task.Dispose();
-        GC.SuppressFinalize(this);
-    }
+    public partial void Dispose() { Handle.Dispose(); GC.SuppressFinalize(this); }
 
     /// <summary>
     /// Releases resources held by the installation request.
