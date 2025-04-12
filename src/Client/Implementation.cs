@@ -44,7 +44,6 @@ static class Beta
     }
 }
 
-
 public static partial class Client
 {
     static readonly HashAlgorithm Algorithm = SHA256.Create();
