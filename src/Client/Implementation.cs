@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Bedrockix.Minecraft;
@@ -14,7 +12,7 @@ static class Release
 
     internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll";
 
-    internal static bool Exists => !Instance.Exists(Path);
+    internal static bool Exists => Instance.Exists(Path);
 
     internal static bool Launch()
     {
@@ -33,7 +31,7 @@ static class Beta
 
     internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll";
 
-    internal static bool Exists => !Instance.Exists(Path);
+    internal static bool Exists => Instance.Exists(Path);
 
     internal static bool Launch()
     {
