@@ -15,9 +15,9 @@ static class Instance
 
         public static implicit operator nint(Mutex @this) => @this._;
 
-        internal Mutex(string value) => Created = (_ = Native.CreateMutex(default, false, value)) != default && Marshal.GetLastWin32Error() == default;
+        Mutex(string value) => Created = (_ = CreateMutex(default, false, value)) != default && Marshal.GetLastWin32Error() == default;
 
-        public void Dispose() => Native.CloseHandle(_);
+        public void Dispose() => CloseHandle(_);
     }
 
     internal readonly ref struct Process : IDisposable
@@ -28,12 +28,12 @@ static class Instance
 
         public static implicit operator nint(Process @this) => @this._;
 
-        internal Process(int value) => _ = OpenProcess(PROCESS_ALL_ACCESS, false, value);
+        Process(int value) => _ = OpenProcess(PROCESS_ALL_ACCESS, false, value);
 
         public void Dispose() => CloseHandle(_);
     }
 
-    internal static bool Check(in Mutex mutex) { using (mutex) return mutex.Created; }
+    internal static bool Exists(in Mutex mutex) { using (mutex) return mutex.Created; }
 
     internal static void Create(in Process process, in Mutex mutex)
     {

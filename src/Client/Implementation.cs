@@ -5,42 +5,53 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Bedrockix.Minecraft;
-using System.Threading;
 
 namespace Flarial.Launcher.SDK;
 
-readonly ref struct Build
+static class Release
 {
-    internal Build(string path, string address)
+    internal const string Path = "Flarial.Client.Release.dll";
+
+    internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll";
+
+    internal static bool Exists => !Instance.Exists(Path);
+
+    internal static bool Launch()
     {
-        Path = path;
-        Address = address;
+        if (Beta.Exists) Game.Terminate();
+        if (Exists) return Game.Launch(false).HasValue;
+
+        var _ = Loader.Launch(Path);
+        if (_.HasValue) Instance.Create(_.Value, Path);
+        return _.HasValue;
     }
-
-    internal readonly string Path;
-
-    internal readonly string Address;
 }
+
+static class Beta
+{
+    internal const string Path = "Flarial.Client.Beta.dll";
+
+    internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll";
+
+    internal static bool Exists => !Instance.Exists(Path);
+
+    internal static bool Launch()
+    {
+        if (Release.Exists) Game.Terminate();
+        if (Exists) return Game.Launch(false).HasValue;
+
+        var _ = Loader.Launch(Path);
+        if (_.HasValue) Instance.Create(_.Value, Path);
+        return _.HasValue;
+    }
+}
+
 
 public static partial class Client
 {
     static readonly HashAlgorithm Algorithm = SHA256.Create();
 
     static readonly object Lock = new();
-
-    static readonly (string Uri, string Path, string Mutex) Release = new()
-    {
-        Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll",
-        Path = @"Flarial.Launcher.SDK\Flarial.Client.Release.dll",
-        Mutex = "Flarial.Client.Release"
-    };
-
-    static readonly (string Uri, string Path, string Mutex) Beta = new()
-    {
-        Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll",
-        Path = @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll",
-        Mutex = "Flarial.Client.Beta"
-    };
 
     static async Task<bool> VerifyAsync(string path, bool value = false) => await Task.Run(async () =>
     {
@@ -49,36 +60,17 @@ public static partial class Client
         lock (Lock) return hash.Equals(BitConverter.ToString(Algorithm.ComputeHash(stream)).Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
     });
 
-    static bool Loaded(string path)
-    {
-        path = Path.GetFullPath(path);
-        return Metadata.Processes.Any(process =>
-        {
-            using (process)
-            {
-                foreach (ProcessModule module in process.Modules)
-                    using (module)
-                        if (path.Equals(module.FileName, StringComparison.OrdinalIgnoreCase))
-                            return true;
-                return false;
-            }
-        });
-    }
-
     public static async partial Task DownloadAsync(bool value, Action<int> action) => await Task.Run(async () =>
     {
-        var (Uri, Path, _) = value ? Beta : Release;
-        if (!await VerifyAsync(Path, value))
+        var path = value ? Beta.Path : Release.Path;
+        var uri = value ? Beta.Uri : Release.Uri;
+
+        if (!await VerifyAsync(path, value))
         {
-            if (Loaded(Path)) Game.Terminate();
-            Directory.CreateDirectory("Flarial.Launcher.SDK");
-            await Web.DownloadAsync(Uri, Path, action);
+            if (value ? Beta.Exists : Release.Exists) Game.Terminate();
+            await Web.DownloadAsync(uri, path, action);
         }
     });
 
-    public static async partial Task<bool> LaunchAsync(bool value) => await Task.Run(() =>
-    {
-        if (Loaded((value ? Release : Beta).Path)) Game.Terminate();
-        return Loader.Launch((value ? Beta : Release).Path).HasValue;
-    });
+    public static async partial Task<bool> LaunchAsync(bool value) => await Task.Run(() => value ? Beta.Launch() : Release.Launch());
 }
