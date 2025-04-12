@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using Flarial.Launcher.SDK;
 using static Flarial.Launcher.SDK.Native;
 
 static class Instance
