@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Bedrockix.Minecraft;
+using System.Threading;
 
 namespace Flarial.Launcher.SDK;
 
@@ -27,9 +28,19 @@ public static partial class Client
 
     static readonly object Lock = new();
 
-    static readonly (string Uri, string Path) Release = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll", @"Flarial.Launcher.SDK\Flarial.Client.Release.dll");
+    static readonly (string Uri, string Path, string Mutex) Release = new()
+    {
+        Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll",
+        Path = @"Flarial.Launcher.SDK\Flarial.Client.Release.dll",
+        Mutex = "Flarial.Client.Release"
+    };
 
-    static readonly (string Uri, string Path) Beta = new("https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll", @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll");
+    static readonly (string Uri, string Path, string Mutex) Beta = new()
+    {
+        Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll",
+        Path = @"Flarial.Launcher.SDK\Flarial.Client.Beta.dll",
+        Mutex = "Flarial.Client.Beta"
+    };
 
     static async Task<bool> VerifyAsync(string path, bool value = false) => await Task.Run(async () =>
     {
@@ -56,7 +67,7 @@ public static partial class Client
 
     public static async partial Task DownloadAsync(bool value, Action<int> action) => await Task.Run(async () =>
     {
-        var (Uri, Path) = value ? Beta : Release;
+        var (Uri, Path, _) = value ? Beta : Release;
         if (!await VerifyAsync(Path, value))
         {
             if (Loaded(Path)) Game.Terminate();
