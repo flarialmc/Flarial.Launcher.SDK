@@ -20,7 +20,7 @@ static partial class Web
 
     const string Index = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
 
-    const string Launcher = "https://raw.githubusercontent.com/flarialmc/newcdn/refs/heads/main/launcher/launcherVersion.txt";
+    const string Launcher = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/launcherVersion.txt";
 
     const string Store = "https://fe3cr.delivery.mp.microsoft.com/ClientWebService/client.asmx/secured";
 
