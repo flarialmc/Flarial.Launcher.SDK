@@ -18,7 +18,9 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
 
-    <AssemblyVersion>1.6.5.0</AssemblyVersion>
+    <DeterministicSourcePaths>true</DeterministicSourcePaths>
+    <DebugType>embedded</DebugType>
+    <AssemblyVersion>1.6.6.0</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
@@ -30,9 +32,8 @@
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" PackagePath="" />
     <None Include="..\README.md" Pack="true" PackagePath="" />
-    <None Include="Flarial.Launcher.SDK.targets" Pack="true" PackagePath="build" />
     <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml" LogicalName="GetExtendedUpdateInfo2.xml" />
-    <PackageReference Include="Bedrockix" Version="*" />
+    <PackageReference Include="Bedrockix" Version="1.8.3.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
