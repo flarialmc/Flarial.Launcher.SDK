@@ -11,16 +11,14 @@
 
     <PackageId>Flarial.Launcher.SDK</PackageId>
     <Title>Flarial Launcher SDK</Title>
-    <Version>1.6.7.1</Version>
+    <Version>1.6.7.2</Version>
     <Description>SDK for Flarial Client's Launcher.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Flarial</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/flarialmc/Flarial.Launcher.SDK</RepositoryUrl>
 
-    <DeterministicSourcePaths>true</DeterministicSourcePaths>
-    <DebugType>embedded</DebugType>
-    <AssemblyVersion>1.6.7.1</AssemblyVersion>
+    <AssemblyVersion>1.6.7.2</AssemblyVersion>
     <AssemblyTitle>Flarial Launcher SDK</AssemblyTitle>
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
