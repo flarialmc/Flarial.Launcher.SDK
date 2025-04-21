@@ -35,8 +35,6 @@ public static partial class Launcher
     {
         var @this = await Web.LauncherAsync();
 
-        if (new Version(@this["version"].GetString()) == Version) return false;
-
         var source = Path.Combine(Temp, Path.GetRandomFileName());
         var path = Path.Combine(Temp, Path.ChangeExtension(Path.GetRandomFileName(), ".cmd"));
 
