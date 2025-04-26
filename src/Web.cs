@@ -26,7 +26,7 @@ static partial class Web
 
     const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
 
-    static readonly HttpClient HttpClient = new(new HttpClientHandler()
+    static readonly HttpClient Client = new(new HttpClientHandler()
     {
         AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
         AllowAutoRedirect = true
@@ -34,24 +34,23 @@ static partial class Web
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
     {
-        using var message = await HttpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
-        message.EnsureSuccessStatusCode();
+        using var message = await Client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead); message.EnsureSuccessStatusCode();
+        using Stream source = await message.Content.ReadAsStreamAsync(), destination = File.Create(path);
 
-        using var stream = await message.Content.ReadAsStreamAsync();
-        using FileStream destination = new(path, FileMode.Create, FileAccess.Write, FileShare.None, Environment.SystemPageSize, true);
+        int @this = default; var @object = new byte[Environment.SystemPageSize];
+        long @params = message.Content.Headers.ContentLength.GetValueOrDefault(), value = default;
 
-        var count = 0; var value = 0L; var buffer = new byte[Environment.SystemPageSize];
-        while ((count = await stream.ReadAsync(buffer, default, buffer.Length)) != default)
+        while ((@this = await source.ReadAsync(@object, default, @object.Length)) != default)
         {
-            await destination.WriteAsync(buffer, default, count);
-            if (action is not null) action((int)Math.Round(100F * (value += count) / message.Content.Headers.ContentLength.Value));
+            await destination.WriteAsync(@object, default, @this);
+            if (action != default && @params != default) action((int)Math.Round(100F * (value += @this) / @params));
         }
     }
 
     internal static async Task<HashSet<string>> SupportedAsync()
     {
         HashSet<string> collection = [];
-        using StreamReader stream = new(await HttpClient.GetStreamAsync(Supported));
+        using StreamReader stream = new(await Client.GetStreamAsync(Supported));
 
         string value = default;
         while ((value = await stream.ReadLineAsync()) != default)
@@ -62,21 +61,21 @@ static partial class Web
 
     internal static async Task<Stream> FrameworkAsync()
     {
-        using var reader = JsonReaderWriterFactory.CreateJsonReader(await HttpClient.GetStreamAsync(Index), XmlDictionaryReaderQuotas.Max);
-        return await HttpClient.GetStreamAsync(XElement.Load(reader).Descendants("packageContent").Last(_ => _.Value.StartsWith("https://")).Value);
+        using var reader = JsonReaderWriterFactory.CreateJsonReader(await Client.GetStreamAsync(Index), XmlDictionaryReaderQuotas.Max);
+        return await Client.GetStreamAsync(XElement.Load(reader).Descendants("packageContent").Last(_ => _.Value.StartsWith("https://")).Value);
     }
 
     internal static async Task<Uri> UriAsync(HttpContent content)
     {
-        using var message = await HttpClient.PostAsync(Store, content);
+        using var message = await Client.PostAsync(Store, content);
         using var stream = await message.Content.ReadAsStreamAsync();
         return new(XElement.Load(stream).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value);
     }
 
-    internal static async Task<IEnumerable<string>> VersionsAsync() => JsonArray.Parse(await HttpClient.GetStringAsync(Releases)).Select(_ => _.GetString());
+    internal static async Task<IEnumerable<string>> VersionsAsync() => JsonArray.Parse(await Client.GetStringAsync(Releases)).Select(_ => _.GetString());
 
-    internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await HttpClient.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
+    internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await Client.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
 
-    internal static async Task<JsonObject> LauncherAsync() => await Task.Run(async () => JsonObject.Parse(await HttpClient.GetStringAsync(Launcher)))
+    internal static async Task<JsonObject> LauncherAsync() => await Task.Run(async () => JsonObject.Parse(await Client.GetStringAsync(Launcher)))
 ;
 }
