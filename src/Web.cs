@@ -26,11 +26,7 @@ static partial class Web
 
     const string Supported = "https://raw.githubusercontent.com/flarialmc/newcdn/main/launcher/NewSupported.txt";
 
-    static readonly HttpClient Client = new(new HttpClientHandler()
-    {
-        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
-        AllowAutoRedirect = true
-    });
+    static readonly HttpClient Client = new(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate, AllowAutoRedirect = true });
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
     {
