@@ -12,11 +12,11 @@ using Windows.Data.Json;
 
 namespace Flarial.Launcher.SDK;
 
-static partial class Web
+static class Web
 {
-    const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
+    const string Packages = "https://raw.githubusercontent.com/ddf8196/mc-w10-versiondb-auto-update/master/versions.json.min";
 
-    const string Releases = "https://raw.githubusercontent.com/dummydummy123456/BedrockDB/main/releases.json";
+    const string Hashes = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll_hashes.json";
 
     const string Index = "https://api.nuget.org/v3/registration5-gz-semver2/microsoft.services.store.engagement/index.json";
 
@@ -30,7 +30,9 @@ static partial class Web
 
     internal static async Task DownloadAsync(string uri, string path, Action<int> action = default)
     {
-        using var message = await Client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead); message.EnsureSuccessStatusCode();
+        using var message = await Client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+        message.EnsureSuccessStatusCode();
+
         using Stream source = await message.Content.ReadAsStreamAsync(), destination = File.Create(path);
 
         int @this = default; var @object = new byte[Environment.SystemPageSize];
@@ -43,19 +45,30 @@ static partial class Web
         }
     }
 
-    internal static async Task<HashSet<string>> SupportedAsync()
+    internal static async Task<Dictionary<string, string>> VersionsAsync() => await Task.Run(async () =>
     {
-        HashSet<string> collection = [];
+        HashSet<string> @this = [];
+        Dictionary<string, string> @params = [];
+
         using StreamReader stream = new(await Client.GetStreamAsync(Supported));
 
-        string value = default;
-        while ((value = await stream.ReadLineAsync()) != default)
-            collection.Add(value);
+        string @string; while ((@string = stream.ReadLine()) != default)
+            if (!string.IsNullOrEmpty(@string = @string.Trim()))
+                @this.Add(@string);
 
-        return collection;
-    }
+        foreach (var item in JsonArray.Parse(await Client.GetStringAsync(Packages)))
+        {
+            var array = item.GetArray(); if (array.GetNumberAt(2) != default) continue;
+            var value = array.GetStringAt(default);
 
-    internal static async Task<Stream> FrameworkAsync()
+            if (!@this.Contains(value = value.Substring(default, value.LastIndexOf('.')))) continue;
+            @params.Add(value, array.GetStringAt(1));
+        }
+
+        return @params;
+    });
+
+    internal static async Task<Stream> FrameworksAsync()
     {
         using var reader = JsonReaderWriterFactory.CreateJsonReader(await Client.GetStreamAsync(Index), XmlDictionaryReaderQuotas.Max);
         return await Client.GetStreamAsync(XElement.Load(reader).Descendants("packageContent").Last(_ => _.Value.StartsWith("https://")).Value);
@@ -64,14 +77,13 @@ static partial class Web
     internal static async Task<Uri> UriAsync(HttpContent content)
     {
         using var message = await Client.PostAsync(Store, content);
+        message.EnsureSuccessStatusCode();
+
         using var stream = await message.Content.ReadAsStreamAsync();
         return new(XElement.Load(stream).Descendants().FirstOrDefault(_ => _.Value.StartsWith("http://tlu.dl.delivery.mp.microsoft.com", StringComparison.Ordinal)).Value);
     }
 
-    internal static async Task<IEnumerable<string>> VersionsAsync() => JsonArray.Parse(await Client.GetStringAsync(Releases)).Select(_ => _.GetString());
-
     internal static async Task<string> HashAsync(bool value) => JsonObject.Parse(await Client.GetStringAsync(Hashes))[value ? "Beta" : "Release"].GetString();
 
-    internal static async Task<JsonObject> LauncherAsync() => await Task.Run(async () => JsonObject.Parse(await Client.GetStringAsync(Launcher)))
-;
+    internal static async Task<JsonObject> LauncherAsync() => await Task.Run(async () => JsonObject.Parse(await Client.GetStringAsync(Launcher)));
 }
