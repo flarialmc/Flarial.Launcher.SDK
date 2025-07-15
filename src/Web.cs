@@ -45,27 +45,27 @@ static class Web
         }
     }
 
-    internal static async Task<Dictionary<string, string>> VersionsAsync() => await Task.Run(async () =>
+    internal static async Task<(HashSet<string> Supported, Dictionary<string, string> Packages)> VersionsAsync() => await Task.Run(async () =>
     {
-        HashSet<string> @this = [];
-        Dictionary<string, string> @params = [];
+        HashSet<string>supported = [];
+        Dictionary<string, string> packages = [];
 
         using StreamReader stream = new(await Client.GetStreamAsync(Supported));
 
         string @string; while ((@string = stream.ReadLine()) != default)
             if (!string.IsNullOrEmpty(@string = @string.Trim()))
-                @this.Add(@string);
+               supported.Add(@string);
 
         foreach (var item in JsonArray.Parse(await Client.GetStringAsync(Packages)))
         {
             var array = item.GetArray(); if (array.GetNumberAt(2) != default) continue;
             var value = array.GetStringAt(default);
 
-            if (!@this.Contains(value = value.Substring(default, value.LastIndexOf('.')))) continue;
-            @params.Add(value, array.GetStringAt(1));
+            if (!supported .Contains(value = value.Substring(default, value.LastIndexOf('.')))) continue;
+            packages.Add(value, array.GetStringAt(1));
         }
 
-        return @params;
+        return (supported,  packages);
     });
 
     internal static async Task<Stream> FrameworksAsync()

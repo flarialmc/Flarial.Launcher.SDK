@@ -21,7 +21,9 @@ public sealed partial class Catalog : IEnumerable<string>
 
     static readonly SemaphoreSlim Semaphore = new(1, 1);
 
-    readonly Dictionary<string, string> Collection;
+    readonly HashSet<string> Supported;
+
+    readonly Dictionary<string, string> Packages;
 
     static readonly string Content = new Func<string>(() =>
     {
@@ -31,9 +33,13 @@ public sealed partial class Catalog : IEnumerable<string>
 
     static readonly AddPackageOptions Options = new() { ForceAppShutdown = true, ForceUpdateFromAnyVersion = true };
 
-    Catalog(Dictionary<string, string> value) => Collection = value;
+    Catalog(HashSet<string> supported, Dictionary<string, string> packages) => (Supported, Packages) = (supported, packages);
 
-    public static async partial Task<Catalog> GetAsync() => new Catalog(await Web.VersionsAsync());
+    public static async partial Task<Catalog> GetAsync()
+    {
+        var _ = await Web.VersionsAsync();
+        return new(_.Supported, _.Packages);
+    }
 
     public static partial async Task FrameworksAsync()
     {
@@ -57,11 +63,11 @@ public sealed partial class Catalog : IEnumerable<string>
 
     public partial async Task<Uri> UriAsync(string value) => await Task.Run(async () =>
     {
-        using StringContent content = new(string.Format(Content, Collection[value], '1'), Encoding.UTF8, "application/soap+xml");
+        using StringContent content = new(string.Format(Content, Packages[value], '1'), Encoding.UTF8, "application/soap+xml");
         await FrameworksAsync(); return await Web.UriAsync(content);
     });
 
-    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Collection.ContainsKey(Metadata.Version));
+    public async partial Task<bool> CompatibleAsync() => await Task.Run(() => Supported.Contains(Metadata.Version));
 
     public async partial Task<Request> InstallAsync(string value, Action<int> action) => new(Manager.AddPackageByUriAsync(await UriAsync(value), Options), action);
 
@@ -69,7 +75,7 @@ public sealed partial class Catalog : IEnumerable<string>
     /// Enumerates versions present in the catalog.
     /// </summary>
 
-    public IEnumerator<string> GetEnumerator() => Collection.Keys.GetEnumerator();
+    public IEnumerator<string> GetEnumerator() => Packages.Keys.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
