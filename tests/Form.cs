@@ -36,7 +36,7 @@ sealed class Form : System.Windows.Forms.Form
 
             SuspendLayout();
             progressBar.Visible = false;
-            Controls.Add(new Pages(new Play(this), new Versions(this), new Settings(this)) { Enabled = Game.Installed });
+            Controls.Add(new Pages(new Play(this), new Versions(this), new Settings(this)) { Enabled = Game.Installed && !Minecraft.GDK });
             ResumeLayout();
         };
     }

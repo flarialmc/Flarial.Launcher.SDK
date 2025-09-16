@@ -90,4 +90,11 @@ public static partial class Minecraft
     /// </returns>
 
     public static partial Task<bool> LaunchAsync(string path);
+
+
+    /// <summary>
+    /// Check if Minecraft: Bedrock Edition is using the Game Development Kit.
+    /// </summary>
+
+    public static partial bool GDK { get; }
 }

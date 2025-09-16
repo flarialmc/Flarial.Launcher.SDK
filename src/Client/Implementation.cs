@@ -12,6 +12,8 @@ static class Release
 
     internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/latest.dll";
 
+    const string Mutex = "34F45015-6EB6-4213-ABEF-F2967818E628";
+
     internal static bool Exists => Instance.Exists(Path);
 
     internal static bool Launch()
@@ -20,7 +22,7 @@ static class Release
         if (Exists) return Game.Launch(false).HasValue;
 
         var _ = Loader.Launch(Path);
-        if (_.HasValue) Instance.Create(_.Value, Path);
+        if (_.HasValue) Instance.Create(_.Value, Mutex);
         return _.HasValue;
     }
 }
@@ -31,6 +33,8 @@ static class Beta
 
     internal const string Uri = "https://raw.githubusercontent.com/flarialmc/newcdn/main/dll/beta.dll";
 
+    const string Mutex = "6E41334A-423F-4A4F-9F41-5C440C9CCBDC";
+
     internal static bool Exists => Instance.Exists(Path);
 
     internal static bool Launch()
@@ -39,7 +43,7 @@ static class Beta
         if (Exists) return Game.Launch(false).HasValue;
 
         var _ = Loader.Launch(Path);
-        if (_.HasValue) Instance.Create(_.Value, Path);
+        if (_.HasValue) Instance.Create(_.Value, Mutex);
         return _.HasValue;
     }
 }
