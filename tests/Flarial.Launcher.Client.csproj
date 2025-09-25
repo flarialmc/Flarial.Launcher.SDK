@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../src/Flarial.Launcher.SDK.csproj" />
+    <ProjectReference Include="../src/Flarial.Launcher.SDK/Flarial.Launcher.SDK.csproj" />
     <PackageReference Include="Costura.Fody" Version="*" PrivateAssets="All" />
   </ItemGroup>
 

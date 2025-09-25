@@ -14,7 +14,7 @@ static class Release
 
     const string Mutex = "34F45015-6EB6-4213-ABEF-F2967818E628";
 
-    internal static bool Exists => Instance.Exists(Path);
+    internal static bool Exists => Instance.Exists(Mutex);
 
     internal static bool Launch()
     {
@@ -35,7 +35,7 @@ static class Beta
 
     const string Mutex = "6E41334A-423F-4A4F-9F41-5C440C9CCBDC";
 
-    internal static bool Exists => Instance.Exists(Path);
+    internal static bool Exists => Instance.Exists(Mutex);
 
     internal static bool Launch()
     {

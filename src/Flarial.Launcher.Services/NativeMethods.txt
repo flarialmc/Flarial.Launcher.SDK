@@ -1,0 +1,25 @@
+GetPackagesByPackageFamily
+    PACKAGE_FULL_NAME_MAX_LENGTH
+
+GetApplicationUserModelId
+    APPLICATION_USER_MODEL_ID_MAX_LENGTH
+
+PackageDebugSettings
+IPackageDebugSettings
+
+ApplicationActivationManager
+IApplicationActivationManager
+
+OpenProcess
+WaitForSingleObject
+CloseHandle
+    INVALID_HANDLE_VALUE
+
+CompareStringOrdinal
+
+FindWindowEx
+GetWindowThreadProcessId
+
+CreateFile2
+GetFileInformationByHandleEx
+    FILE_STANDARD_INFO
