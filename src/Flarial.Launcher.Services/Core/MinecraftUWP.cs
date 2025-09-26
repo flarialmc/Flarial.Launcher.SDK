@@ -1,7 +1,6 @@
-using System;
+using System.IO;
 using Flarial.Launcher.Services.System;
 using Windows.Management.Core;
-using Windows.Storage;
 using Windows.Win32.Foundation;
 using Windows.Win32.Globalization;
 using static Windows.Win32.PInvoke;
@@ -32,12 +31,12 @@ unsafe sealed class MinecraftUWP : Minecraft
                     uint processId = 0;
                     GetWindowThreadProcessId(window, &processId);
 
-                    if (ProcessHandle.Open(processId) is not { } @_)
+                    if (ProcessHandle.Open(processId) is not { } process)
                         continue;
 
-                    using (@_)
+                    using (process)
                     {
-                        var error = GetApplicationUserModelId(@_, &length, string2);
+                        var error = GetApplicationUserModelId(process, &length, string2);
                         if (error is not WIN32_ERROR.ERROR_SUCCESS) continue;
 
                         var result = CompareStringOrdinal(string1, -1, string2, -1, true);
@@ -54,15 +53,37 @@ unsafe sealed class MinecraftUWP : Minecraft
 
     internal override ProcessHandle? LaunchProcess()
     {
-        if (IsRunning) return ProcessHandle.Open(Activate());
-        fixed (char* path = ApplicationDataManager.CreateForPackageFamily(_packageFamilyName).LocalFolder.Path)
-        {
+        if (IsRunning)
+            return ProcessHandle.Open(Activate());
 
+        var path = ApplicationDataManager.CreateForPackageFamily(_packageFamilyName).LocalFolder.Path;
+        path = Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock");
+
+        fixed (char* @string = path)
+        {
+            FileHandle? file = null;
+            using var process = ProcessHandle.Open(Activate());
+
+            try
+            {
+                while (process?.IsRunning(1) ?? false)
+                {
+                    file ??= FileHandle.Open(@string);
+                    if (file?.IsDeleted ?? false) return process;
+                }
+            }
+            finally { file?.Dispose(); }
         }
+
         return null;
     }
 
     public override void Terminate()
     {
+        uint count = 1U, length = PACKAGE_FULL_NAME_MAX_LENGTH;
+        PWSTR packageFullNames = new(), packageFullName = stackalloc char[(int)length];
+
+        GetPackagesByPackageFamily(_packageFamilyName, ref count, &packageFullNames, ref length, packageFullName);
+        _packageDebugSettings.TerminateAllProcesses(packageFullName);
     }
 }

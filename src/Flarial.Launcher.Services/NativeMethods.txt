@@ -23,3 +23,15 @@ GetWindowThreadProcessId
 CreateFile2
 GetFileInformationByHandleEx
     FILE_STANDARD_INFO
+
+CreateRemoteThread
+TerminateThread
+ResumeThread
+
+GetModuleHandle
+GetProcAddress
+
+EXPLICIT_ACCESS_W
+
+PROCESS_CREATION_FLAGS
+INFINITE

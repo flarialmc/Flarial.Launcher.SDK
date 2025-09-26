@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../src/Flarial.Launcher.SDK/Flarial.Launcher.SDK.csproj" />
+    <ProjectReference Include="../src/Flarial.Launcher.Services/Flarial.Launcher.Services.csproj"/>
     <PackageReference Include="Costura.Fody" Version="*" PrivateAssets="All" />
   </ItemGroup>
 

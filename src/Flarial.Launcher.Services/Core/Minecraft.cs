@@ -6,7 +6,12 @@ using Flarial.Launcher.Services.System;
 
 namespace Flarial.Launcher.Services.Core;
 
-public unsafe abstract class Minecraft
+partial class Minecraft
+{
+    public static readonly Minecraft Current = new MinecraftUWP();
+}
+
+public unsafe abstract partial class Minecraft
 {
     internal Minecraft(string packageFamilyName, string applicationModelUserId)
     {
@@ -23,9 +28,9 @@ public unsafe abstract class Minecraft
         _packageDebugSettings = (IPackageDebugSettings)packageDebugSettings;
     }
 
-    static readonly IApplicationActivationManager _applicationActivationManager;
+    private protected static readonly IApplicationActivationManager _applicationActivationManager;
 
-    static readonly IPackageDebugSettings _packageDebugSettings;
+    private protected static readonly IPackageDebugSettings _packageDebugSettings;
 
     protected readonly string _packageFamilyName, _applicationModelUserId;
 
@@ -67,6 +72,8 @@ public unsafe abstract class Minecraft
         }
     }
 
+    internal abstract ProcessHandle? LaunchProcess();
+
     public uint? Launch()
     {
         using var process = LaunchProcess();
@@ -74,8 +81,6 @@ public unsafe abstract class Minecraft
     }
 
     public abstract bool IsRunning { get; }
-
-    internal abstract ProcessHandle? LaunchProcess();
 
     public abstract void Terminate();
 }
