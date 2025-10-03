@@ -8,7 +8,9 @@ namespace Flarial.Launcher.Services.Core;
 
 partial class Minecraft
 {
-    public static readonly Minecraft Current = new MinecraftUWP();
+    public static readonly Minecraft UWP = new MinecraftUWP();
+
+    public static readonly Minecraft WindowsBeta = new MinecraftWindowsBeta();
 }
 
 public unsafe abstract partial class Minecraft
