@@ -44,5 +44,8 @@ static class Native
     internal static extern nint GetDesktopWindow();
 
     [DllImport("User32.dll")]
+    internal static extern nint GetShellWindow();
+
+    [DllImport("User32.dll")]
     internal static extern int GetWindowThreadProcessId(nint hWnd, out int lpdwProcessId);
 }

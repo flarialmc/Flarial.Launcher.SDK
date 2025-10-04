@@ -7,6 +7,7 @@ using Windows.Globalization;
 using Windows.System.Profile;
 using System.Threading.Tasks;
 using static Microsoft.Win32.Registry;
+using static Flarial.Launcher.SDK.Native;
 using static Microsoft.Win32.RegistryOptions;
 using static System.Xml.XmlDictionaryReaderQuotas;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -41,25 +42,7 @@ public static class Licensing
 
     public static async Task<bool> CheckAsync()
     {
-        var information = GetSystemIdForPublisher();
-        var array = information.Id.ToArray();
-
-        var handle = Native.GetDesktopWindow();
-        Native.GetWindowThreadProcessId(handle, out var identifer);
-
-        for (var index = 0; index < array.Length; index++) array[index] /= (byte)identifer;
-        var name = ToBase64String(array);
-
-        using var key = CurrentUser.CreateSubKey(Name, true, Volatile);
-
-        using var session = key.OpenSubKey(name);
-        if (session is null) await RefreshLicensesAsync(AllLicenses);
-
-        using var license = session ?? key.CreateSubKey(name, false, Volatile);
-
-        GeographicRegion region = new();
-        var uri = string.Format(_uri, region.CodeTwoLetter);
-
+        var uri = string.Format(_uri, new GeographicRegion().CodeTwoLetter);
         using var stream = await _client.GetStreamAsync(uri);
         using var reader = CreateJsonReader(stream, Max);
 
