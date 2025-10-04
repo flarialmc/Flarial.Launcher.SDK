@@ -10,7 +10,7 @@
 
     <PackageId>Flarial.Launcher.SDK</PackageId>
     <Title>Flarial Launcher SDK</Title>
-    <Version>1.6.11.0</Version>
+    <Version>1.6.12.0</Version>
     <Description>SDK for Flarial Client's Launcher.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Flarial</Authors>

@@ -8,6 +8,8 @@ namespace Flarial.Launcher.SDK;
 [SuppressUnmanagedCodeSecurity]
 static class Native
 {
+    internal const uint ERROR_ACCESS_DISABLED_WEBBLADE_TAMPER = 0x000004FE;
+
     internal const int PROCESS_ALL_ACCESS = 0X1FFFFF;
 
     internal const int DUPLICATE_CLOSE_SOURCE = 0x00000001;
@@ -37,4 +39,7 @@ static class Native
 
     [DllImport("WSClient.dll")]
     internal static extern void RemoveDeveloperLicense(nint hwndParent);
+
+    [DllImport("User32.dll")]
+    internal static extern nint GetDesktopWindow();
 }

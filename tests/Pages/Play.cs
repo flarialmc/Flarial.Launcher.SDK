@@ -54,34 +54,43 @@ sealed class Play : UserControl
 
         button.Click += async (_, _) =>
         {
-            if (!await _.Catalog.CompatibleAsync()) return;
-
-            SuspendLayout();
-            progressBar.Visible = true;
-            button.Enabled = checkBox.Visible = default;
-            ResumeLayout();
-
-            await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
+            try
             {
-                if (progressBar.Value != _)
+
+                SuspendLayout();
+                progressBar.Visible = true;
+                button.Enabled = checkBox.Visible = default;
+                ResumeLayout();
+
+                if (!await _.Catalog.CompatibleAsync()) return;
+                if (!await Licensing.CheckAsync()) return;
+
+                await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
                 {
-                    if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
-                    progressBar.Value = _;
-                }
-            }));
+                    if (progressBar.Value != _)
+                    {
+                        if (progressBar.Style is ProgressBarStyle.Marquee) progressBar.Style = ProgressBarStyle.Blocks;
+                        progressBar.Value = _;
+                    }
+                }));
 
-            SuspendLayout();
-            progressBar.Value = 0;
-            progressBar.Style = ProgressBarStyle.Marquee;
-            ResumeLayout();
+                SuspendLayout();
+                progressBar.Value = 0;
+                progressBar.Style = ProgressBarStyle.Marquee;
+                ResumeLayout();
 
-            await Client.LaunchAsync(checkBox.Checked);
+                await Client.LaunchAsync(checkBox.Checked);
 
-            SuspendLayout();
-            progressBar.Visible = default;
-            button.Enabled = checkBox.Visible = true;
-            button.Text = "Launch";
-            ResumeLayout();
+            }
+            finally
+            {
+                SuspendLayout();
+                progressBar.Visible = default;
+                button.Enabled = checkBox.Visible = true;
+                button.Text = "Launch";
+                ResumeLayout();
+            }
+
         };
     }
 }
