@@ -27,8 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
     <EmbeddedResource Include="Resources/GetExtendedUpdateInfo2.xml" LogicalName="GetExtendedUpdateInfo2.xml" />
   </ItemGroup>
 
