@@ -4,11 +4,9 @@ using System.Net.Http;
 using System.Xml.Linq;
 using static System.Convert;
 using Windows.Globalization;
-using System.ComponentModel;
 using Windows.System.Profile;
 using System.Threading.Tasks;
 using static Microsoft.Win32.Registry;
-using System.Runtime.InteropServices;
 using static Microsoft.Win32.RegistryOptions;
 using static System.Xml.XmlDictionaryReaderQuotas;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -36,18 +34,20 @@ public static class Licensing
     /// <summary>
     ///  Checks licenses for Minecraft: Bedrock Edition.
     /// </summary>
-  
+
     /// <returns>
     /// If licenses exists then <c>true</c> else <c>false</c>.
     /// </returns>
 
     public static async Task<bool> CheckAsync()
     {
-        var handle = Native.GetDesktopWindow();
         var information = GetSystemIdForPublisher();
         var array = information.Id.ToArray();
 
-        for (var index = 0; index < array.Length; index++) array[index] /= (byte)handle;
+        var handle = Native.GetDesktopWindow();
+        Native.GetWindowThreadProcessId(handle, out var identifer);
+
+        for (var index = 0; index < array.Length; index++) array[index] /= (byte)identifer;
         var name = ToBase64String(array);
 
         using var key = CurrentUser.CreateSubKey(Name, true, Volatile);
