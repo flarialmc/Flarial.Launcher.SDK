@@ -62,8 +62,8 @@ sealed class Play : UserControl
                 button.Enabled = checkBox.Visible = default;
                 ResumeLayout();
 
-                if (!await _.Catalog.CompatibleAsync()) return;
                 if (!await Licensing.CheckAsync()) return;
+                if (!await _.Catalog.CompatibleAsync()) return;
 
                 await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
                 {
