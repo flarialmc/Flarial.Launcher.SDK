@@ -2,19 +2,12 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
-using static System.Convert;
 using Windows.Globalization;
 using Windows.System.Profile;
 using System.Threading.Tasks;
-using static Microsoft.Win32.Registry;
-using static Flarial.Launcher.SDK.Native;
-using static Microsoft.Win32.RegistryOptions;
 using static System.Xml.XmlDictionaryReaderQuotas;
-using System.Runtime.InteropServices.WindowsRuntime;
-using static Windows.System.Profile.SystemIdentification;
 using static System.Runtime.Serialization.Json.JsonReaderWriterFactory;
 using static Windows.ApplicationModel.Store.LicenseManagement.LicenseManager;
-using static Windows.ApplicationModel.Store.LicenseManagement.LicenseRefreshOption;
 
 namespace Flarial.Launcher.SDK;
 
@@ -54,13 +47,6 @@ public static class Licensing
         if (result.ExtendedError is not null) throw result.ExtendedError;
 
         var value = result.LicenseSatisfactionInfos.First().Value;
-
-        var source = value.SatisfiedByPass;
-        source = source || value.SatisfiedByDevice;
-        source = source || value.SatisfiedByOpenLicense;
-        source = source || value.SatisfiedBySignedInUser;
-        source = source || value.SatisfiedByInstallMedia;
-
-        return source && value.IsSatisfied && !value.SatisfiedByTrial;
+        return value.IsSatisfied && !value.SatisfiedByTrial;
     }
 }
