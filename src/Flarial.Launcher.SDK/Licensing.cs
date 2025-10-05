@@ -21,7 +21,7 @@ public static class Licensing
 
     const string Name = @"SOFTWARE\Flarial.Launcher.SDK";
 
-    static readonly string _uri = string.Format(Uri, "{0}", AnalyticsInfo.VersionInfo.DeviceFamily, "9P5X4QVLC2XR");
+    static readonly string _uri = string.Format(Uri, "{0}", AnalyticsInfo.VersionInfo.DeviceFamily, "9P5X4QVLC2XR,9NBLGGH2JHXJ");
 
     static readonly HttpClient _client = new();
 
@@ -46,7 +46,7 @@ public static class Licensing
         var result = await GetSatisfactionInfosAsync(contentIds, keyIds);
         if (result.ExtendedError is not null) throw result.ExtendedError;
 
-        var value = result.LicenseSatisfactionInfos.First().Value;
-        return value.IsSatisfied && !value.SatisfiedByTrial;
+        var values = result.LicenseSatisfactionInfos.Values;
+        return values.Any(_ => _.IsSatisfied && !_.SatisfiedByTrial);
     }
 }
