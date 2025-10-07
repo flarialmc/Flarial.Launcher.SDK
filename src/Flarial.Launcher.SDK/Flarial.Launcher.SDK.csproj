@@ -22,8 +22,11 @@
     <Product>Flarial Launcher SDK</Product>
     <Copyright>Copyright (C) 2024 - 25</Copyright>
     <Company>Flarial</Company>
+
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,9 +38,19 @@
   <ItemGroup>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.IO.Compression" />
-    <ProjectReference Include="../Flarial.Launcher.Services/Flarial.Launcher.Services.csproj" />
+    <ProjectReference Include="../Flarial.Launcher.Services/Flarial.Launcher.Services.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bedrockix" Version="1.9.1" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.2" />
   </ItemGroup>
+
+  <Target DependsOnTargets="ResolveReferences" Name="_">
+    <ItemGroup>
+      <BuildOutputInPackage
+        Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget','ProjectReference'))" />
+    </ItemGroup>
+  </Target>
 
 </Project>
