@@ -97,7 +97,7 @@ unsafe sealed class MinecraftWindowsBeta : Minecraft
         using (process) process.Terminate();
     }
 
-    internal override ProcessHandle? LaunchProcess()
+    internal override ProcessHandle? LaunchProcess(LaunchType type)
     {
         if (!LaunchBootstrapperProcess()) return null;
         return FindGameProcess();

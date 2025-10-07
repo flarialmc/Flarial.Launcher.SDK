@@ -30,10 +30,19 @@ sealed class Play : UserControl
             Margin = default
         };
 
-        CheckBox checkBox = new()
+        CheckBox checkBox1 = new()
         {
             Text = "Beta",
             AutoSize = true,
+            Anchor = AnchorStyles.None,
+            Margin = default
+        };
+
+        CheckBox checkBox2 = new()
+        {
+            Text = "Wait For Resources",
+            AutoSize = true,
+            Checked = true,
             Anchor = AnchorStyles.None,
             Margin = default
         };
@@ -50,9 +59,11 @@ sealed class Play : UserControl
         panel.RowStyles.Add(new() { SizeType = SizeType.Percent, Height = 100 });
         panel.RowStyles.Add(new() { SizeType = SizeType.AutoSize });
         panel.RowStyles.Add(new() { SizeType = SizeType.AutoSize });
+        panel.RowStyles.Add(new() { SizeType = SizeType.AutoSize });
         panel.Controls.Add(button, 0, 0);
-        panel.Controls.Add(checkBox, 0, 1);
-        panel.Controls.Add(progressBar, 0, 1);
+        panel.Controls.Add(checkBox1, 0, 1);
+        panel.Controls.Add(checkBox2, 0, 2);
+        panel.Controls.Add(progressBar, 0, 3);
 
         button.Click += async (_, _) =>
         {
@@ -61,13 +72,13 @@ sealed class Play : UserControl
 
                 SuspendLayout();
                 progressBar.Visible = true;
-                button.Enabled = checkBox.Visible = default;
+                button.Enabled = checkBox1.Visible = checkBox2.Visible = default;
                 ResumeLayout();
 
                 if (!await Licensing.CheckAsync()) throw new LicenseException(typeof(object));
-                if (!checkBox.Checked && !await _.Catalog.CompatibleAsync()) return;
+                if (!checkBox1.Checked && !await _.Catalog.CompatibleAsync()) return;
 
-                await Client.DownloadAsync(checkBox.Checked, (_) => Invoke(() =>
+                await Client.DownloadAsync(checkBox1.Checked, (_) => Invoke(() =>
                 {
                     if (progressBar.Value != _)
                     {
@@ -81,13 +92,13 @@ sealed class Play : UserControl
                 progressBar.Style = ProgressBarStyle.Marquee;
                 ResumeLayout();
 
-                await Client.LaunchAsync(checkBox.Checked);
+                await Client.LaunchAsync(checkBox1.Checked, checkBox2.Checked);
             }
             finally
             {
                 SuspendLayout();
                 progressBar.Visible = default;
-                button.Enabled = checkBox.Visible = true;
+                button.Enabled = checkBox1.Visible = checkBox2.Visible = true;
                 button.Text = "Launch";
                 ResumeLayout();
             }

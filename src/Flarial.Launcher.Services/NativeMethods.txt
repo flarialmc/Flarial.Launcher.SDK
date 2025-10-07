@@ -33,9 +33,20 @@ LoadLibraryEx
 GetModuleHandle
 GetProcAddress
 
+SetEntriesInAcl
+SetNamedSecurityInfo
+
 NtQueryInformationProcess
     PROCESS_BASIC_INFORMATION
 
+QueueUserAPC
+WriteProcessMemory
+
+VirtualAllocEx
+VirtualFreeEx
+
+ACE_FLAGS
+GENERIC_ACCESS_RIGHTS
 EXPLICIT_ACCESS_W
 
 PROCESS_CREATION_FLAGS

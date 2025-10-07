@@ -3,6 +3,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Bedrockix.Minecraft;
+using Flarial.Launcher.Services.Modding;
+using Flarial.Launcher.Services.Core;
+using Windows.System;
 
 namespace Flarial.Launcher.SDK;
 
@@ -16,13 +19,13 @@ static class Release
 
     internal static bool Exists => Instance.Exists(Mutex);
 
-    internal static bool Launch()
+    internal static bool Launch(LaunchType type)
     {
         if (Beta.Exists) Game.Terminate();
         if (Exists) return Game.Launch(false).HasValue;
 
-        var _ = Loader.Launch(Path);
-        if (_.HasValue) Instance.Create(_.Value, Mutex);
+        var _ = Injector.UWP.Launch(type, Path);
+        if (_.HasValue) Instance.Create((int)_.Value, Mutex);
         return _.HasValue;
     }
 }
@@ -37,13 +40,13 @@ static class Beta
 
     internal static bool Exists => Instance.Exists(Mutex);
 
-    internal static bool Launch()
+    internal static bool Launch(LaunchType type)
     {
         if (Release.Exists) Game.Terminate();
         if (Exists) return Game.Launch(false).HasValue;
 
-        var _ = Loader.Launch(Path);
-        if (_.HasValue) Instance.Create(_.Value, Mutex);
+        var _ = Injector.UWP.Launch(type, Path);
+        if (_.HasValue) Instance.Create((int)_.Value, Mutex);
         return _.HasValue;
     }
 }
@@ -73,5 +76,13 @@ public static partial class Client
         }
     });
 
-    public static async partial Task<bool> LaunchAsync(bool value) => await Task.Run(() => value ? Beta.Launch() : Release.Launch());
+    [Obsolete("Use 'Flarial.Launcher.Services'.", true)]
+    public static async partial Task<bool> LaunchAsync(bool value) => await LaunchAsync(value, false);
+
+    public static async partial Task<bool> LaunchAsync(bool useBeta, bool waitForResources) => await Task.Run(delegate
+    {
+        var type = waitForResources ? LaunchType.ResourceInit : LaunchType.MenuLoad;
+        if (useBeta) return Beta.Launch(type);
+        return Release.Launch(type);
+    });
 }

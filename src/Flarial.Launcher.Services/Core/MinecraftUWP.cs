@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.IO;
 using Flarial.Launcher.Services.System;
 using Windows.Management.Core;
@@ -51,31 +53,36 @@ unsafe sealed class MinecraftUWP : Minecraft
         }
     }
 
-    internal override ProcessHandle? LaunchProcess()
+    internal override ProcessHandle? LaunchProcess(LaunchType type)
     {
-        if (IsRunning)
+        if (type is LaunchType.None || IsRunning)
             return ProcessHandle.Open(Activate());
 
-        var path = ApplicationDataManager.CreateForPackageFamily(_packageFamilyName).LocalFolder.Path;
-        path = Path.Combine(path, @"games\com.mojang\minecraftpe\resource_init_lock");
-
-        fixed (char* @string = path)
+        var path1 = ApplicationDataManager.CreateForPackageFamily(_packageFamilyName).LocalFolder.Path;
+        var path2 = type switch
         {
-            FileHandle? file = null;
-            using var process = ProcessHandle.Open(Activate());
+            LaunchType.ResourceInit => @"games\com.mojang\minecraftpe\resource_init_lock",
+            LaunchType.MenuLoad => @"games\com.mojang\minecraftpe\menu_load_lock",
+            _ => throw new NotImplementedException()
+        };
 
-            try
+        fixed (char* @string = Path.Combine(path1, path2))
+        {
+            if (ProcessHandle.Open(Activate()) is not { } process)
+                return null;
+
+            FileHandle? file = null; try
             {
-                while (process?.IsRunning(1) ?? false)
+                while (process.IsRunning(1))
                 {
                     file ??= FileHandle.Open(@string);
-                    if (file?.IsDeleted ?? false) return process;
+                    if (file?.IsDeleted ?? false) break;
                 }
             }
             finally { file?.Dispose(); }
-        }
 
-        return null;
+            return process;
+        }
     }
 
     public override void Terminate()

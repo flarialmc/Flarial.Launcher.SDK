@@ -74,12 +74,12 @@ public unsafe abstract partial class Minecraft
         }
     }
 
-    internal abstract ProcessHandle? LaunchProcess();
+    internal abstract ProcessHandle? LaunchProcess(LaunchType type);
 
-    public uint? Launch()
+    public uint? Launch(LaunchType type)
     {
-        using var process = LaunchProcess();
-        return process?.ProcessId;
+        if (LaunchProcess(type) is not { } process) return null;
+        return process.IsRunning(0) ? process.ProcessId : null;
     }
 
     public abstract bool IsRunning { get; }
